@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# WeChat DevTools
+.miniprogram/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Private config (contains local paths)
+project.private.config.json

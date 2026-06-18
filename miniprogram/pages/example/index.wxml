@@ -1,0 +1,305 @@
+<!--pages/example/index.wxml-->
+
+<!-- getUserInfo: callContainer 获取用户标识 -->
+<block wx:if="{{ type === 'getUserInfo' }}">
+  <view class="page-container">
+    <view class="title">功能介绍</view>
+    <view class="info">CloudRun 网关会在每个 callContainer 请求中自动注入 X-WX-OPENID header，后端可直接读取用户身份，无需额外鉴权。</view>
+    <view class="title">callContainer 获取用户标识示例</view>
+    <view class="block">
+      <view class="step-title"><text class="step-left">step</text> <text class="step-right">1 </text>后端读取 X-WX-OPENID</view>
+      <view class="code_zone">
+        <rich-text nodes="<pre style='overflow: scroll;'>{{getUserInfoCode}}</pre>" />
+      </view>
+    </view>
+    <view class="block">
+      <view class="btn-full" bind:tap="getOpenId" wx:if="{{!haveGetOpenId}}">运行示例</view>
+      <view class="box_text" wx:if="{{openId}}">openid: {{openId}}</view>
+      <view class="box_text" wx:if="{{appid}}">appid: {{appid}}</view>
+      <view class="box_text" wx:if="{{!openId && !appid}}">用户标识将展示在这里</view>
+      <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+      <view class="button_clear" bindtap="clearOpenId" wx:if="{{haveGetOpenId}}">清空</view>
+    </view>
+  </view>
+</block>
+
+<!-- cloudbaserun: callContainer 调用演示 -->
+<block wx:if="{{ type === 'cloudbaserun' }}">
+  <view class="page-container">
+    <view class="title">功能介绍</view>
+    <view class="info">云托管（CloudRun）支持任意语言和框架的容器化应用，小程序通过 callContainer 调用 REST 接口。</view>
+    <view class="title">小程序调用云托管示例</view>
+    <view class="block">
+      <view class="step-title"><text class="step-left">step</text> <text class="step-right">1 </text>确认云托管服务已部署</view>
+      <view class="step-text">服务名：fataliceenv，环境：cloudenv1-d4gkp36fb4243e78c</view>
+      <view class="step-title"><text class="step-left">step</text> <text class="step-right">2</text>小程序端 callContainer 调用</view>
+      <view class="code_zone">
+        <rich-text nodes="<pre style='overflow: scroll;'>{{callcbrCode}}</pre>" />
+      </view>
+      <view class="btn-full" bind:tap="runCallContainer" wx:if="{{!haveGetCallContainerRes}}">运行示例</view>
+      <view class="box_text">{{ callContainerResStr ? callContainerResStr : '云托管调用结果将展示在这里' }}</view>
+      <view class="button_clear" bindtap="clearCallContainerRes" wx:if="{{haveGetCallContainerRes}}">清空</view>
+    </view>
+  </view>
+</block>
+
+<!-- home-cards: 首页卡片 -->
+<block wx:if="{{ type === 'home-cards' }}">
+  <view class="page-container">
+    <view class="title">功能介绍</view>
+    <view class="top_tip">通过 callContainer 调用 /home/cards 获取首页内容卡片数据。</view>
+    <view class="title">callContainer 请求示例</view>
+    <view class="block">
+      <view class="code_zone">
+        <rich-text nodes="<pre style='overflow: scroll;'>const res = await api.getHomeCards()\n// res.data 为卡片数组</pre>" />
+      </view>
+    </view>
+    <view class="btn-full" bind:tap="getCards" wx:if="{{!haveGetRecord}}">获取卡片</view>
+    <view wx:if="{{cards.length}}" class="code_box">
+      <view class="code_box_title">卡片列表</view>
+      <view class="code_box_record" wx:for="{{cards}}" wx:key="_id">
+        <view class="code_box_record_detail">{{item.desc || item.title || '(无标题)'}}</view>
+      </view>
+    </view>
+    <view class="box_text" wx:if="{{!cards.length && haveGetRecord}}">暂无卡片数据</view>
+    <view class="button_clear" bindtap="clearCards" wx:if="{{haveGetRecord}}">清空</view>
+    <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+  </view>
+</block>
+
+<!-- uploadFile: 双路径文件上传 -->
+<block wx:if="{{ type === 'uploadFile' }}">
+  <view class="page-container">
+    <view class="title">功能介绍</view>
+    <view class="top_tip">两种文件上传方式：客户端直传云存储 vs callContainer 服务端处理</view>
+    <view class="title">方式1: 客户端直传云存储</view>
+    <view class="block">
+      <view class="code_zone">
+        <rich-text nodes="<pre style='overflow: scroll;'>{{callUploadFileCode}}</pre>" />
+      </view>
+    </view>
+    <view class="title">方式2: callContainer 服务端上传</view>
+    <view class="block">
+      <view class="code_zone">
+        <rich-text nodes="<pre style='overflow: scroll;'>{{callContainerUploadCode}}</pre>" />
+      </view>
+    </view>
+    <view class="btn-full" bind:tap="uploadImg">客户端直传</view>
+    <view class="btn-full" bind:tap="uploadViaContainer">服务端上传</view>
+    <view class="box_text" wx:if="{{!imgSrc}}">上传的图片将展示在这里</view>
+    <view wx:if="{{imgSrc}}" class="code_box">
+      <image class="code_img" src="{{imgSrc}}" mode="aspectFit"></image>
+    </view>
+    <view class="button_clear" bindtap="clearImgSrc" wx:if="{{haveGetImgSrc}}">清空</view>
+    <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+  </view>
+</block>
+
+<!-- release: 发布动态 -->
+<block wx:if="{{ type === 'release' }}">
+  <view class="page-container">
+    <view class="title">功能介绍</view>
+    <view class="top_tip">通过 callContainer 调用 /api/release 发布内容动态</view>
+    <view class="btn-full" bind:tap="showReleaseModal" wx:if="{{!haveReleaseResult}}">发布动态</view>
+    <view wx:if="{{haveReleaseResult}}" class="code_box">
+      <view class="code_box_title">发布结果</view>
+      <view class="box_text">{{releaseResultStr}}</view>
+    </view>
+    <view class="button_clear" bindtap="clearReleaseResult" wx:if="{{haveReleaseResult}}">清空</view>
+    <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+  </view>
+  <view wx:if="{{showReleaseModal}}" class="modal-mask">
+    <view class="modal-content">
+      <view class="modal-title">发布动态</view>
+      <input class="modal-input" placeholder="描述" value="{{releaseDesc}}" bindinput="onReleaseDescInput"/>
+      <input class="modal-input" placeholder="标签（逗号分隔）" value="{{releaseTags}}" bindinput="onReleaseTagsInput"/>
+      <view class="modal-actions">
+        <button bindtap="onReleaseCancel">取消</button>
+        <button bindtap="onReleaseConfirm" type="primary">确认</button>
+      </view>
+    </view>
+  </view>
+</block>
+
+<!-- mj-create: 创建麻将房间 -->
+<block wx:if="{{ type === 'mj-create' }}">
+  <view class="page-container">
+    <view class="title">创建麻将房间</view>
+    <view class="top_tip">通过 callContainer 调用 /api/mj/createRoom 创建房间，自动分配6位房间号</view>
+    <view class="block">
+      <view class="modal-input-wrap">
+        <input class="modal-input" placeholder="玩家名称" value="{{mjCreateName}}" bindinput="onMjCreateNameInput"/>
+        <input class="modal-input" placeholder="规则（默认 sichuan）" value="{{mjCreateRule}}" bindinput="onMjCreateRuleInput"/>
+        <input class="modal-input" placeholder="底分（默认 1）" value="{{mjCreateBaseScore}}" bindinput="onMjCreateBaseScoreInput" type="number"/>
+        <input class="modal-input" placeholder="局数（默认 8）" value="{{mjCreateMaxRounds}}" bindinput="onMjCreateMaxRoundsInput" type="number"/>
+      </view>
+      <view class="btn-full" bind:tap="mjCreate">创建房间</view>
+    </view>
+    <view wx:if="{{haveMjCreateResult}}" class="code_box">
+      <view class="code_box_title">房间信息</view>
+      <view class="box_text">{{mjCreateResultStr}}</view>
+    </view>
+    <view class="button_clear" bindtap="clearMjCreateResult" wx:if="{{haveMjCreateResult}}">清空</view>
+    <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+  </view>
+</block>
+
+<!-- mj-join: 加入麻将房间 -->
+<block wx:if="{{ type === 'mj-join' }}">
+  <view class="page-container">
+    <view class="title">加入麻将房间</view>
+    <view class="top_tip">输入6位房间号和玩家名称，通过 /api/mj/joinRoom 加入</view>
+    <view class="block">
+      <view class="modal-input-wrap">
+        <input class="modal-input" placeholder="6位房间号" value="{{mjJoinRoomId}}" bindinput="onMjJoinRoomIdInput" type="number"/>
+        <input class="modal-input" placeholder="玩家名称" value="{{mjJoinName}}" bindinput="onMjJoinNameInput"/>
+      </view>
+      <view class="btn-full" bind:tap="mjJoin">加入房间</view>
+    </view>
+    <view wx:if="{{haveMjJoinResult}}" class="code_box">
+      <view class="code_box_title">房间状态</view>
+      <view class="box_text">{{mjJoinResultStr}}</view>
+    </view>
+    <view class="button_clear" bindtap="clearMjJoinResult" wx:if="{{haveMjJoinResult}}">清空</view>
+    <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+  </view>
+</block>
+
+<!-- mj-game: 查询我的房间 -->
+<block wx:if="{{ type === 'mj-game' }}">
+  <view class="page-container">
+    <view class="title">游戏与结算</view>
+    <view class="top_tip">查询当前用户所在的活跃房间，查看房间状态</view>
+    <view class="block">
+      <view class="modal-input-wrap">
+        <input class="modal-input" placeholder="userId（或先获取 openId）" value="{{mjGameUserId}}" bindinput="onMjGameUserIdInput"/>
+      </view>
+      <view class="btn-full" bind:tap="mjFindMyRoom">查找我的房间</view>
+    </view>
+    <view wx:if="{{haveMjGameResult}}" class="code_box">
+      <view class="code_box_title">房间信息</view>
+      <view class="box_text">{{mjGameResultStr}}</view>
+    </view>
+    <view class="button_clear" bindtap="clearMjGameResult" wx:if="{{haveMjGameResult}}">清空</view>
+    <cloud-tip-modal showTipProps="{{showTip}}" title="{{title}}" content="{{content}}"></cloud-tip-modal>
+  </view>
+</block>
+
+<!-- model-guide: AI 接入能力（保留原样） -->
+<block wx:if="{{ type === 'model-guide'}}">
+  <view class="page-container">
+    <view class="title">功能介绍</view>
+    <view class="top_tip">腾讯云开发提供 AI 对话能力，支持 Agent，大模型流式对话，可通过 Agent-UI 组件快速集成 AI 能力</view>
+    <view class="title">集成 Agent-UI 组件指引</view>
+    <view class="block">
+      <view class="step-title"><text class="step-left">step</text> <text class="step-right">1 </text>拷贝组件源码包</view>
+      <view style="display: flex;align-items: center;">点击复制查看组件仓库地址 <image mode="widthFix" style="width: 20px;height: 20px" bind:tap="copyUrl" src='../../images/copy.svg'/></view>
+      <view class="step-title"><text class="step-left">step</text> <text class="step-right">2 </text>将组件拷贝至小程序目录中</view>
+      <image class="img" mode="widthFix" src="../../images/ai_example2.png"></image>
+      <view class="step-title"><text class="step-left">step</text> <text class="step-right">3 </text>在页面 .json 配置文件中注册组件</view>
+      <view class="code_zone">
+        <rich-text nodes="<pre style='overflow: scroll;'>{{ai_page_config}}</pre>" />
+      </view>
+      <view class="step-title"><text class="step-left">step</text> <text class="step-right">4 </text>在页面 .wxml 文件中引用组件</view>
+      <view class="code_zone">
+        <rich-text nodes="<pre style='overflow: scroll;'>{{ai_wxml_config}}</pre>" />
+      </view>
+      <view class="step-title"><text class="step-left">step</text> <text class="step-right">4 </text>在页面 .js 文件中编写配置</view>
+      <view class="code_zone">
+        <rich-text nodes="<pre style='overflow: scroll;'>{{ai_data_config}}</pre>" />
+      </view>
+    </view>
+  </view>
+</block>
+
+<!-- ai-assistant（保留原样） -->
+<block wx:if="{{ type === 'ai-assistant' }}">
+  <view class="page-container">
+    <view class="title">AI 智能开发小程序</view>
+    <view class="info">连接 AI 开发工具与 MCP 开发小程序</view>
+    <view class="block">
+      <view class="step-title">
+        <text class="step-left">step</text>
+        <text class="step-right">1 </text>
+        打开扩展面板
+      </view>
+      <view class="step-text">在微信开发者工具中使用快捷键打开扩展面板：</view>
+      <view class="notice-box">
+        <view class="notice-text">
+          <text class="notice-highlight">注意：</text>使用快捷键前需先点击编辑区，将焦点从预览区切换到编辑区。
+        </view>
+      </view>
+      <view class="shortcut-box">
+        <view class="shortcut-item">
+          <view class="shortcut-label">Windows/Linux：</view>
+          <view class="shortcut-key">Ctrl + Shift + X</view>
+        </view>
+        <view class="shortcut-item">
+          <view class="shortcut-label">macOS：</view>
+          <view class="shortcut-key">Shift + Command + X</view>
+        </view>
+      </view>
+      <view class="step-title">
+        <text class="step-left">step</text>
+        <text class="step-right">2 </text>
+        搜索并安装插件
+      </view>
+      <view class="step-text">在扩展商店中搜索：</view>
+      <view class="plugin-name-box">
+        <text class="plugin-name">微信云开发 AI ToolKit</text>
+        <view class="copy-btn" bindtap="copyPluginName">
+          <image class="copy-icon" src="../../images/copy.svg" mode="widthFix"></image>
+          <text class="copy-text">复制</text>
+        </view>
+      </view>
+      <view class="step-text">找到插件后点击安装并启用</view>
+      <view class="step-title">
+        <text class="step-left">step</text>
+        <text class="step-right">3 </text>
+        打开 AI 开发功能
+      </view>
+      <view class="step-text">安装完成后，选中任意文件，点击左上角打开 AI 开发功能即可使用</view>
+      <image class="img step-img" src="https://tcb-advanced-a656fc-1257967285.ap-shanghai.app.tcloudbase.com/imgs/wechat-ide-extension/ide-extension.png" mode="widthFix"></image>
+      <view class="divider"></view>
+      <view class="feature-section">
+        <view class="feature-title">✨ 场景示例</view>
+        <view class="feature-list">
+          <view class="feature-item-with-examples">
+            <view class="feature-main">💡 智能代码生成与补全</view>
+            <view class="feature-examples">
+              <view class="feature-example-wrapper">
+                <text class="feature-example-text">· 帮我创建一个商品列表页面,包含图片、标题、价格和加入购物车按钮</text>
+                <view class="feature-copy-btn" bindtap="copyPrompt" data-prompt="帮我创建一个商品列表页面,包含图片、标题、价格和加入购物车按钮">
+                  <image class="feature-copy-icon" src="../../images/copy.svg" mode="widthFix"></image>
+                </view>
+              </view>
+              <view class="feature-example-wrapper">
+                <text class="feature-example-text">· 帮我完善这个函数,实现商品搜索功能</text>
+                <view class="feature-copy-btn" bindtap="copyPrompt" data-prompt="帮我完善这个函数,实现商品搜索功能">
+                  <image class="feature-copy-icon" src="../../images/copy.svg" mode="widthFix"></image>
+                </view>
+              </view>
+            </view>
+          </view>
+          <view class="feature-item-with-examples">
+            <view class="feature-main">🔧 代码优化与重构建议</view>
+            <view class="feature-examples">
+              <view class="feature-example-wrapper">
+                <text class="feature-example-text">· 优化这个页面的间隔，提升信息密度</text>
+                <view class="feature-copy-btn" bindtap="copyPrompt" data-prompt="优化这个页面的间隔，提升信息密度">
+                  <image class="feature-copy-icon" src="../../images/copy.svg" mode="widthFix"></image>
+                </view>
+              </view>
+              <view class="feature-example-wrapper">
+                <text class="feature-example-text">· 完善 callContainer 调用的错误处理代码</text>
+                <view class="feature-copy-btn" bindtap="copyPrompt" data-prompt="完善 callContainer 调用的错误处理代码">
+                  <image class="feature-copy-icon" src="../../images/copy.svg" mode="widthFix"></image>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</block>
