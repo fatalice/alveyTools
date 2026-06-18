@@ -1,4 +1,4 @@
-<!--index.wxml-->
+<!--pages/toolbox/index.wxml-->
 <view class="container">
   <view class="grid">
     <view class="grid-item" wx:for="{{gridItems}}" wx:key="name" data-index="{{index}}" bindtap="onGridTap">

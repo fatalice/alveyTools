@@ -137,6 +137,16 @@ function echo(data) {
   return callContainer({ path: '/echo', method: 'GET' })
 }
 
+// ---- 题库 ----
+
+function getExamMeta() {
+  return callContainer({ path: '/api/exam/meta', method: 'POST' })
+}
+
+function getExamQuestions(data) {
+  return callContainer({ path: '/api/exam/questions', method: 'POST', data })
+}
+
 module.exports = {
   ENV_ID,
   SERVICE_NAME,
@@ -152,4 +162,5 @@ module.exports = {
   uploadFile, release,
   getHomeCards, getHomeSwipers,
   echo,
+  getExamMeta, getExamQuestions,
 }

@@ -1,0 +1,112 @@
+<!--pages/ai-exam/index.wxml-->
+<view class="page">
+  <!-- 首页：选择练习模式 -->
+  <block wx:if="{{view === 'home'}}">
+    <view class="hero">
+      <view class="hero-title">人工智能训练师</view>
+      <view class="hero-sub" wx:if="{{!loading}}">三级理论复习 · 共 {{typeFilters[0].count || 0}} 题</view>
+      <view class="hero-sub" wx:if="{{loading}}">题库加载中...</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">练习统计</view>
+      <view class="stats-row">
+        <view class="stat-item">
+          <view class="stat-num">{{progress.stats.total || 0}}</view>
+          <view class="stat-label">已做</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-num ok">{{progress.stats.correct || 0}}</view>
+          <view class="stat-label">正确</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-num bad">{{progress.stats.wrong || 0}}</view>
+          <view class="stat-label">错题</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">题型选择</view>
+      <view class="type-grid">
+        <view
+          class="type-item {{selectedType === item.key ? 'active' : ''}}"
+          wx:for="{{typeFilters}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onTypeTap"
+        >
+          <view class="type-name">{{item.label}}</view>
+          <view class="type-count">{{item.count}} 题</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="switch-row">
+        <text>随机顺序</text>
+        <switch checked="{{randomMode}}" bindchange="onRandomChange" color="#07c160" />
+      </view>
+      <view class="switch-row">
+        <text>仅练错题</text>
+        <switch checked="{{onlyWrong}}" bindchange="onWrongOnlyChange" color="#07c160" />
+      </view>
+    </view>
+
+    <button class="primary-btn" bindtap="startPractice">开始练习</button>
+  </block>
+
+  <!-- 刷题页 -->
+  <block wx:elif="{{view === 'practice'}}">
+    <view class="practice-header">
+      <view class="back-link" bindtap="backHome">← 返回</view>
+      <view class="progress-text">{{index + 1}} / {{session.length}}</view>
+    </view>
+
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{(index + 1) / session.length * 100}}%;"></view>
+    </view>
+
+    <block wx:if="{{!finished && current}}">
+      <view class="card question-card">
+        <view class="q-meta">
+          <text class="q-tag">{{current.typeLabel}}</text>
+          <text class="q-id">#{{current.num}}</text>
+        </view>
+        <view class="q-text">{{current.question}}</view>
+
+        <view class="options">
+          <view
+            class="option {{selectedKeys.indexOf(item.key) >= 0 ? 'selected' : ''}} {{submitted && ((current.type === 'judgment' && item.key === current.answer) || (current.type !== 'judgment' && current.answer.indexOf(item.key) >= 0)) ? 'correct' : ''}} {{submitted && selectedKeys.indexOf(item.key) >= 0 && ((current.type === 'judgment' && item.key !== current.answer) || (current.type !== 'judgment' && current.answer.indexOf(item.key) < 0)) ? 'wrong' : ''}}"
+            wx:for="{{current.options}}"
+            wx:key="key"
+            data-key="{{item.key + ''}}"
+            bindtap="onOptionTap"
+          >
+            <view class="option-key" wx:if="{{current.type !== 'judgment'}}">{{item.key}}</view>
+            <view class="option-label">{{item.label}}</view>
+          </view>
+        </view>
+
+        <view wx:if="{{submitted}}" class="result-box {{isCorrect ? 'ok' : 'bad'}}">
+          <view class="result-title">{{isCorrect ? '回答正确' : '回答错误'}} · 正确答案：{{current.answerRaw || current.answer}}</view>
+          <view class="result-explain">{{current.explanation}}</view>
+        </view>
+      </view>
+
+      <view class="action-row">
+        <button class="ghost-btn" bindtap="prevQuestion" disabled="{{index <= 0}}">上一题</button>
+        <button wx:if="{{!submitted}}" class="primary-btn flex-btn" bindtap="submitAnswer">确认答案</button>
+        <button wx:else class="primary-btn flex-btn" bindtap="nextQuestion">下一题</button>
+      </view>
+    </block>
+
+    <view wx:else class="card finish-card">
+      <view class="finish-title">本轮练习完成</view>
+      <view class="finish-score">正确 {{sessionStats.correct}} / {{sessionStats.total}}</view>
+      <view class="finish-rate">正确率 {{finishRate}}%</view>
+      <button class="primary-btn" bindtap="restartSession">再来一轮</button>
+      <button class="ghost-btn" bindtap="backHome">返回首页</button>
+    </view>
+  </block>
+</view>

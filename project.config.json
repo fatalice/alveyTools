@@ -45,7 +45,7 @@
   },
   "appid": "wx80252a56e1d28227",
   "projectname": "alveyTools",
-  "libVersion": "2.20.1",
+  "libVersion": "3.16.1",
   "condition": {
     "search": {
       "list": []

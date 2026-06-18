@@ -1,6 +1,8 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/toolbox/index",
+    "pages/ai-exam/index",
     "pages/example/index"
   ],
   "window": {
