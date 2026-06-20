@@ -16,6 +16,7 @@ Page({
     current: null,
     selection: '',
     selectedKeys: [],
+    selectedMap: {},
     submitted: false,
     isCorrect: false,
     finished: false,
@@ -93,7 +94,7 @@ Page({
 
   buildQuestionState(question) {
     if (!question) {
-      return { current: null, selection: '', selectedKeys: [], submitted: false, isCorrect: false }
+      return { current: null, selection: '', selectedKeys: [], selectedMap: {}, submitted: false, isCorrect: false }
     }
     return {
       current: {
@@ -102,6 +103,7 @@ Page({
       },
       selection: '',
       selectedKeys: [],
+      selectedMap: {},
       submitted: false,
       isCorrect: false,
     }
@@ -118,11 +120,15 @@ Page({
       if (set.has(key)) set.delete(key)
       else set.add(key)
       const selectedKeys = Array.from(set).sort()
-      this.setData({ selectedKeys, selection: selectedKeys.join('') })
+      const selectedMap = {}
+      selectedKeys.forEach(k => { selectedMap[k] = true })
+      this.setData({ selectedKeys, selectedMap, selection: selectedKeys.join('') })
       return
     }
 
-    this.setData({ selection: key, selectedKeys: [key] })
+    const selectedMap = {}
+    selectedMap[key] = true
+    this.setData({ selection: key, selectedKeys: [key], selectedMap })
   },
 
   submitAnswer() {

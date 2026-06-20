@@ -1,0 +1,232 @@
+page {
+  background-color: #f5f6fa;
+  --td-brand-color: #1aad19;
+  --td-brand-color-active: #129611;
+  --td-brand-color-light: #e8f8e8;
+  --td-brand-color-light-active: #d4f2d4;
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 120rpx;
+}
+
+.header-card {
+  margin: 24rpx 32rpx 0;
+  padding: 40rpx 32rpx;
+  background: linear-gradient(135deg, #1aad19 0%, #129611 100%);
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(26, 173, 25, 0.2);
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 12rpx;
+}
+
+.profile-desc {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.profile-tags {
+  display: flex;
+  gap: 12rpx;
+}
+
+.profile-score {
+  text-align: center;
+}
+
+.profile-score__value {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.profile-score__label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 4rpx;
+}
+
+.stats-card {
+  margin: 24rpx 32rpx 0;
+  padding: 32rpx 0;
+  background: #fff;
+  border-radius: 20rpx;
+  display: flex;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.stats-item {
+  flex: 1;
+  text-align: center;
+}
+
+.stats-value {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1aad19;
+  margin-bottom: 8rpx;
+}
+
+.stats-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.records-card {
+  margin: 24rpx 32rpx 0;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.records-card__title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.score-record {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f8f8f8;
+}
+
+.score-record:last-child {
+  border-bottom: none;
+}
+
+.score-record__left {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.score-record__desc {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.score-record__time {
+  font-size: 22rpx;
+  color: #bbb;
+}
+
+.score-record__points {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1aad19;
+}
+
+.score-record--empty {
+  text-align: center;
+  padding: 32rpx 0;
+  font-size: 26rpx;
+  color: #ccc;
+}
+
+.section-card {
+  margin: 24rpx 32rpx 0;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 24rpx 0;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  padding: 0 32rpx 16rpx;
+}
+
+/* 登录弹窗 */
+.login-popup {
+  padding: 48rpx 32rpx calc(48rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  border-top-left-radius: 24rpx;
+  border-top-right-radius: 24rpx;
+}
+
+.login-popup__title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-bottom: 40rpx;
+}
+
+.login-popup__avatar-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 40rpx;
+}
+
+.login-popup__avatar-btn {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.login-popup__avatar-btn::after {
+  border: none;
+}
+
+.login-popup__avatar-tip {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 16rpx;
+}
+
+.login-popup__nick-row {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 16rpx;
+  border-bottom: 1rpx solid #eee;
+  margin-bottom: 40rpx;
+}
+
+.login-popup__nick-label {
+  width: 100rpx;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.login-popup__nick-input {
+  flex: 1;
+  font-size: 30rpx;
+}
+
+.login-popup__actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.login-popup__actions .t-button {
+  flex: 1;
+}

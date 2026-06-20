@@ -1,158 +1,154 @@
 // miniprogram/utils/api.js
-// 集中管理所有 callContainer 调用，统一配置、错误处理与 Cloud 实例管理
+// 集中管理所有 API 调用，通过自定义域名 + wx.request 方式
 
-const ENV_ID = 'cloudenv1-d4gkp36fb4243e78c'
-const SERVICE_NAME = 'fataliceenv'
+const BASE_URL = 'https://wujiaqi12.site'
 
-// 懒加载单例 Cloud 实例（callContainer 需要独立的 Cloud 对象）
-let _cloudInstance = null
-async function getCloudInstance() {
-  if (_cloudInstance) return _cloudInstance
-  _cloudInstance = new wx.cloud.Cloud({ resourceEnv: ENV_ID })
-  await _cloudInstance.init()
-  return _cloudInstance
-}
-
-// 重置 Cloud 实例（用于出错后重新初始化）
-function resetCloudInstance() {
-  _cloudInstance = null
-}
-
-// 核心 callContainer 包装
-async function callContainer({ path, method = 'GET', data = null, header = {} }) {
-  const c1 = await getCloudInstance()
-  const opts = {
-    path,
-    method,
-    header: {
-      'X-WX-SERVICE': SERVICE_NAME,
-      ...header,
-    },
-  }
-  if (data && method !== 'GET') {
-    opts.data = data
-  }
-  try {
-    const res = await c1.callContainer(opts)
-    let body = res.data
-    if (typeof body === 'string') {
-      try { body = JSON.parse(body) } catch { return body }
+// 核心请求封装
+function request({ path, method = 'GET', data = null }) {
+  return new Promise((resolve, reject) => {
+    const opts = {
+      url: `${BASE_URL}${path}`,
+      method,
+      header: { 'Content-Type': 'application/json' },
+      success(res) {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          resolve(res.data)
+        } else {
+          reject({ code: res.statusCode, message: res.data?.message || `HTTP ${res.statusCode}` })
+        }
+      },
+      fail(err) {
+        const errMsg = err.errMsg || String(err)
+        if (errMsg.includes('timeout')) {
+          reject({ code: 'TIMEOUT', message: '请求超时，请稍后重试' })
+        } else {
+          reject({ code: 'REQUEST_ERROR', message: errMsg })
+        }
+      },
     }
-    return body
-  } catch (err) {
-    const errMsg = (err.errMsg || String(err))
-    if (errMsg.includes('Environment not found') || errMsg.includes('env check invalid')) {
-      throw { code: 'ENV_NOT_FOUND', message: '云开发环境未找到，请检查 envId 配置' }
+    if (data && method !== 'GET') {
+      opts.data = data
     }
-    if (errMsg.includes('service not found') || errMsg.includes('not exist') || errMsg.includes('no such service')) {
-      throw { code: 'SERVICE_NOT_FOUND', message: '云托管服务未找到，请确认 fataliceenv 已部署' }
-    }
-    if (errMsg.includes('timeout')) {
-      throw { code: 'TIMEOUT', message: '请求超时，请稍后重试' }
-    }
-    throw { code: 'CALL_CONTAINER_ERROR', message: errMsg }
-  }
+    wx.request(opts)
+  })
 }
 
 // ---- 用户 / 身份 ----
 
 function getWxContext() {
-  return callContainer({ path: '/api/getWxContext', method: 'GET' })
+  return request({ path: '/api/getWxContext', method: 'GET' })
 }
 
 function genPersonalInfo(userId) {
-  return callContainer({ path: '/api/genPersonalInfo', method: 'POST', data: { userId } })
+  return request({ path: '/api/genPersonalInfo', method: 'POST', data: { userId } })
 }
 
 function savePersonalInfo(data) {
-  return callContainer({ path: '/api/savePersonalInfo', method: 'POST', data })
+  return request({ path: '/api/savePersonalInfo', method: 'POST', data })
 }
 
 // ---- 麻将 ----
 
 function mjCreateRoom(data) {
-  return callContainer({ path: '/api/mj/createRoom', method: 'POST', data })
+  return request({ path: '/api/mj/createRoom', method: 'POST', data })
 }
 
 function mjJoinRoom(data) {
-  return callContainer({ path: '/api/mj/joinRoom', method: 'POST', data })
+  return request({ path: '/api/mj/joinRoom', method: 'POST', data })
 }
 
 function mjGetRoom(roomId) {
-  return callContainer({ path: '/api/mj/getRoom', method: 'POST', data: { roomId } })
+  return request({ path: '/api/mj/getRoom', method: 'POST', data: { roomId } })
 }
 
 function mjFindMyRoom(userId) {
-  return callContainer({ path: '/api/mj/findMyRoom', method: 'POST', data: { userId } })
+  return request({ path: '/api/mj/findMyRoom', method: 'POST', data: { userId } })
 }
 
 function mjLeaveRoom(data) {
-  return callContainer({ path: '/api/mj/leaveRoom', method: 'POST', data })
+  return request({ path: '/api/mj/leaveRoom', method: 'POST', data })
 }
 
 function mjRecordRound(data) {
-  return callContainer({ path: '/api/mj/recordRound', method: 'POST', data })
+  return request({ path: '/api/mj/recordRound', method: 'POST', data })
 }
 
 function mjUndoRound(data) {
-  return callContainer({ path: '/api/mj/undoRound', method: 'POST', data })
+  return request({ path: '/api/mj/undoRound', method: 'POST', data })
 }
 
 function mjEndGame(data) {
-  return callContainer({ path: '/api/mj/endGame', method: 'POST', data })
+  return request({ path: '/api/mj/endGame', method: 'POST', data })
 }
 
 function mjListGames(data) {
-  return callContainer({ path: '/api/mj/listGames', method: 'POST', data })
+  return request({ path: '/api/mj/listGames', method: 'POST', data })
 }
 
 function mjGetGame(data) {
-  return callContainer({ path: '/api/mj/getGame', method: 'POST', data })
+  return request({ path: '/api/mj/getGame', method: 'POST', data })
 }
 
 // ---- 文件上传 ----
 
 function uploadFile(data) {
-  return callContainer({ path: '/api/upload', method: 'POST', data })
+  return request({ path: '/api/upload', method: 'POST', data })
 }
 
 // ---- 内容发布 ----
 
 function release(data) {
-  return callContainer({ path: '/api/release', method: 'POST', data })
+  return request({ path: '/api/release', method: 'POST', data })
 }
 
 function getHomeCards(category = '', limit = 20) {
   const query = category ? `?category=${category}&limit=${limit}` : `?limit=${limit}`
-  return callContainer({ path: `/home/cards${query}`, method: 'GET' })
+  return request({ path: `/home/cards${query}`, method: 'GET' })
 }
 
 function getHomeSwipers() {
-  return callContainer({ path: '/home/swipers', method: 'GET' })
+  return request({ path: '/home/swipers', method: 'GET' })
 }
 
 // ---- 工具 ----
 
-function echo(data) {
-  return callContainer({ path: '/echo', method: 'GET' })
+function echo() {
+  return request({ path: '/echo', method: 'GET' })
 }
 
 // ---- 题库 ----
 
 function getExamMeta() {
-  return callContainer({ path: '/api/exam/meta', method: 'POST' })
+  return request({ path: '/api/exam/meta', method: 'POST' })
 }
 
 function getExamQuestions(data) {
-  return callContainer({ path: '/api/exam/questions', method: 'POST', data })
+  return request({ path: '/api/exam/questions', method: 'POST', data })
+}
+
+// ---- 留言板 ----
+
+function getMessages() {
+  return request({ path: '/api/messages/list', method: 'GET' })
+}
+
+function postMessage(data) {
+  return request({ path: '/api/messages/post', method: 'POST', data })
+}
+
+// ---- 积分 ----
+
+function getScoreInfo(data) {
+  return request({ path: '/api/score/info', method: 'POST', data })
+}
+
+function scoreCheckin(data) {
+  return request({ path: '/api/score/checkin', method: 'POST', data })
 }
 
 module.exports = {
-  ENV_ID,
-  SERVICE_NAME,
-  callContainer,
-  getCloudInstance,
-  resetCloudInstance,
+  BASE_URL,
+  request,
   getWxContext,
   genPersonalInfo,
   savePersonalInfo,
@@ -163,4 +159,6 @@ module.exports = {
   getHomeCards, getHomeSwipers,
   echo,
   getExamMeta, getExamQuestions,
+  getMessages, postMessage,
+  getScoreInfo, scoreCheckin,
 }

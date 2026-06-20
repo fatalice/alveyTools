@@ -1,16 +1,42 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/my/index",
     "pages/toolbox/index",
+    "pages/exam-list/index",
     "pages/ai-exam/index",
+    "pages/sheep-circle/index",
+    "pages/sheep-circle/message-board/index",
+    "pages/sheep-circle/exchange/index",
+    "pages/sheep-circle/notices/index",
     "pages/example/index"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "云托管实战示例",
+    "navigationBarTitleText": "alveyTools",
     "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#1aad19",
+    "backgroundColor": "#fff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/icons/home.png",
+        "selectedIconPath": "images/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/my/index",
+        "text": "我的",
+        "iconPath": "images/icons/usercenter.png",
+        "selectedIconPath": "images/icons/usercenter-active.png"
+      }
+    ]
   },
   "sitemapLocation": "sitemap.json",
   "style": "v2",

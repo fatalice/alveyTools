@@ -25,6 +25,12 @@ page {
   color: #666;
 }
 
+.hero-refresh {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #576b95;
+}
+
 .card {
   background: #fff;
   border-radius: 20rpx;

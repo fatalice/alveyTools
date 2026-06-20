@@ -1,0 +1,37 @@
+<view class="page">
+  <view class="balance-bar">
+    <text class="balance-label">我的积分</text>
+    <text class="balance-value">{{totalScore}}</text>
+  </view>
+
+  <view class="prize-list">
+    <view class="prize-card" wx:for="{{prizes}}" wx:key="id">
+      <view class="prize-card__icon">{{item.emoji}}</view>
+      <view class="prize-card__info">
+        <view class="prize-card__name">{{item.name}}</view>
+        <view class="prize-card__cost">
+          <t-icon name="diamond" size="28rpx" color="#ff9800" />
+          <text class="prize-card__cost-text">{{item.cost}} 积分</text>
+        </view>
+      </view>
+      <t-button
+        size="small"
+        theme="primary"
+        disabled="{{totalScore < item.cost}}"
+        data-item="{{item}}"
+        bindtap="onExchange"
+      >兑换</t-button>
+    </view>
+  </view>
+
+  <view class="exchange-records" wx:if="{{records.length > 0}}">
+    <view class="records-title">兑换记录</view>
+    <view class="record-item" wx:for="{{records}}" wx:key="_id">
+      <view class="record-item__left">
+        <text class="record-item__name">{{item.prizeName}}</text>
+        <text class="record-item__time">{{item.timeText}}</text>
+      </view>
+      <text class="record-item__cost">-{{item.cost}}</text>
+    </view>
+  </view>
+</view>

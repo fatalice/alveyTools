@@ -1,0 +1,58 @@
+page {
+  background: #f5f6fa;
+}
+
+.page {
+  min-height: 100vh;
+  padding: 24rpx 32rpx 60rpx;
+}
+
+.notice-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.notice-card--pinned {
+  border-left: 6rpx solid #1aad19;
+}
+
+.notice-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 16rpx;
+}
+
+.notice-card__pin {
+  font-size: 22rpx;
+  color: #1aad19;
+  font-weight: 500;
+}
+
+.notice-card__title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.notice-card__content {
+  font-size: 28rpx;
+  color: #555;
+  line-height: 1.7;
+  margin-bottom: 16rpx;
+}
+
+.notice-card__time {
+  font-size: 22rpx;
+  color: #bbb;
+}
+
+.empty-tip {
+  text-align: center;
+  padding: 120rpx 0;
+  font-size: 28rpx;
+  color: #bbb;
+}

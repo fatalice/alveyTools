@@ -1,0 +1,22 @@
+<view class="page">
+  <view class="header">
+    <view class="header-title">今日情诗</view>
+    <view class="header-desc">我喜欢看海</view>
+    <view class="header-desc">但和你一起的话</view>
+    <view class="header-desc">我只想看你的眼睛</view>
+  </view>
+
+  <view class="grid-section">
+    <view
+      class="feature-card feature-card--{{item.color}}"
+      wx:for="{{features}}"
+      wx:key="type"
+      data-item="{{item}}"
+      bindtap="onFeatureTap"
+    >
+      <view class="feature-card__icon">{{item.emoji}}</view>
+      <view class="feature-card__name">{{item.name}}</view>
+      <view class="feature-card__desc">{{item.desc}}</view>
+    </view>
+  </view>
+</view>

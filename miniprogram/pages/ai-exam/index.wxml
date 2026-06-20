@@ -6,6 +6,7 @@
       <view class="hero-title">人工智能训练师</view>
       <view class="hero-sub" wx:if="{{!loading}}">三级理论复习 · 共 {{typeFilters[0].count || 0}} 题</view>
       <view class="hero-sub" wx:if="{{loading}}">题库加载中...</view>
+      <view class="hero-refresh" bindtap="reloadData" wx:if="{{!loading}}">↻ 刷新题库</view>
     </view>
 
     <view class="card">
@@ -77,7 +78,7 @@
 
         <view class="options">
           <view
-            class="option {{selectedKeys.indexOf(item.key) >= 0 ? 'selected' : ''}} {{submitted && ((current.type === 'judgment' && item.key === current.answer) || (current.type !== 'judgment' && current.answer.indexOf(item.key) >= 0)) ? 'correct' : ''}} {{submitted && selectedKeys.indexOf(item.key) >= 0 && ((current.type === 'judgment' && item.key !== current.answer) || (current.type !== 'judgment' && current.answer.indexOf(item.key) < 0)) ? 'wrong' : ''}}"
+            class="option {{selectedMap[item.key] ? 'selected' : ''}} {{submitted && current.answer.indexOf(item.key) >= 0 ? 'correct' : ''}} {{submitted && selectedMap[item.key] && current.answer.indexOf(item.key) < 0 ? 'wrong' : ''}}"
             wx:for="{{current.options}}"
             wx:key="key"
             data-key="{{item.key + ''}}"
