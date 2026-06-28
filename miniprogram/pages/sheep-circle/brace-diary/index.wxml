@@ -1,0 +1,32 @@
+<view class="page">
+  <!-- FAB 新建按钮 -->
+  <view class="fab" bindtap="onAdd">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 空态 -->
+  <view class="empty" wx:elif="{{list.length === 0}}">
+    <text class="empty-emoji">🦷</text>
+    <text class="empty-text">还没有日记，记录你的第一条牙套故事吧</text>
+    <view class="empty-btn" bindtap="onAdd">立即记录</view>
+  </view>
+
+  <!-- 时间轴列表 -->
+  <view class="timeline" wx:else>
+    <view class="timeline-item" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onItemTap">
+      <view class="tl-dot"></view>
+      <view class="tl-card">
+        <view class="tl-time">{{item.timeText}}</view>
+        <view class="tl-mood">{{item.moodEmoji}} {{item.moodLabel}}</view>
+        <view class="tl-content" wx:if="{{item.contentPreview}}">{{item.contentPreview}}</view>
+        <view class="tl-img-hint" wx:if="{{item.imageCount > 0}}">📷 {{item.imageCount}} 张</view>
+        <view class="tl-img-hint tl-no-img" wx:else>无图片</view>
+      </view>
+    </view>
+  </view>
+</view>

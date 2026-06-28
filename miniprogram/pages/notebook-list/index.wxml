@@ -1,0 +1,18 @@
+<view class="page">
+  <view class="header">
+    <text class="header-title">人工智能训练师实操</text>
+    <text class="header-subtitle">共{{sections.length}}个章节，点击查看代码内容</text>
+  </view>
+
+  <view class="section" wx:for="{{sections}}" wx:key="id">
+    <view class="section-header">
+      <text class="section-title">{{item.title}}</text>
+      <text class="section-count">{{item.notebooks.length}}个文件</text>
+    </view>
+    <view class="notebook-item" wx:for="{{item.notebooks}}" wx:for-item="nb" wx:key="id" data-id="{{nb.id}}" bindtap="onNotebookTap">
+      <text class="nb-icon">📓</text>
+      <text class="nb-title">{{nb.title}}</text>
+      <text class="nb-arrow">›</text>
+    </view>
+  </view>
+</view>

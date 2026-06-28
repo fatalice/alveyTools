@@ -1,15 +1,53 @@
 // miniprogram/utils/api.js
-// 集中管理所有 API 调用，通过自定义域名 + wx.request 方式
+// 通过 wx.request 调用云托管，启动时获取 openid 缓存
 
 const BASE_URL = 'https://wujiaqi12.site'
+const OPENID_KEY = 'alvey_openid'
 
-// 核心请求封装
+let _openid = ''
+
+function getOpenid() {
+  if (_openid) return Promise.resolve(_openid)
+  const cached = wx.getStorageSync(OPENID_KEY)
+  if (cached) {
+    _openid = cached
+    return Promise.resolve(_openid)
+  }
+  return new Promise((resolve) => {
+    wx.login({
+      success(loginRes) {
+        if (!loginRes.code) { resolve(''); return }
+        wx.request({
+          url: `${BASE_URL}/api/auth/openid`,
+          method: 'POST',
+          header: { 'Content-Type': 'application/json' },
+          data: { code: loginRes.code },
+          success(res) {
+            const openid = res.data && res.data.data && res.data.data.openid
+            if (openid) {
+              _openid = openid
+              wx.setStorageSync(OPENID_KEY, openid)
+            }
+            resolve(_openid)
+          },
+          fail() { resolve('') },
+        })
+      },
+      fail() { resolve('') },
+    })
+  })
+}
+
 function request({ path, method = 'GET', data = null }) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
+    const openid = await getOpenid()
     const opts = {
       url: `${BASE_URL}${path}`,
       method,
-      header: { 'Content-Type': 'application/json' },
+      header: {
+        'Content-Type': 'application/json',
+        'X-WX-OPENID': openid,
+      },
       success(res) {
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data)
@@ -19,15 +57,11 @@ function request({ path, method = 'GET', data = null }) {
       },
       fail(err) {
         const errMsg = err.errMsg || String(err)
-        if (errMsg.includes('timeout')) {
-          reject({ code: 'TIMEOUT', message: '请求超时，请稍后重试' })
-        } else {
-          reject({ code: 'REQUEST_ERROR', message: errMsg })
-        }
+        reject({ code: 'REQUEST_ERROR', message: errMsg })
       },
     }
-    if (data && method !== 'GET') {
-      opts.data = data
+    if (method !== 'GET') {
+      opts.data = { ...(data || {}), _openid: openid }
     }
     wx.request(opts)
   })
@@ -39,8 +73,8 @@ function getWxContext() {
   return request({ path: '/api/getWxContext', method: 'GET' })
 }
 
-function genPersonalInfo(userId) {
-  return request({ path: '/api/genPersonalInfo', method: 'POST', data: { userId } })
+function genPersonalInfo() {
+  return request({ path: '/api/genPersonalInfo', method: 'POST', data: {} })
 }
 
 function savePersonalInfo(data) {
@@ -61,8 +95,8 @@ function mjGetRoom(roomId) {
   return request({ path: '/api/mj/getRoom', method: 'POST', data: { roomId } })
 }
 
-function mjFindMyRoom(userId) {
-  return request({ path: '/api/mj/findMyRoom', method: 'POST', data: { userId } })
+function mjFindMyRoom() {
+  return request({ path: '/api/mj/findMyRoom', method: 'POST', data: {} })
 }
 
 function mjLeaveRoom(data) {
@@ -138,16 +172,39 @@ function postMessage(data) {
 
 // ---- 积分 ----
 
-function getScoreInfo(data) {
-  return request({ path: '/api/score/info', method: 'POST', data })
+function getScoreInfo() {
+  return request({ path: '/api/score/info', method: 'POST', data: {} })
 }
 
-function scoreCheckin(data) {
-  return request({ path: '/api/score/checkin', method: 'POST', data })
+function scoreCheckin() {
+  return request({ path: '/api/score/checkin', method: 'POST', data: {} })
+}
+
+// ---- 牙套日记 ----
+
+function getBraceDiaryList() {
+  return request({ path: '/api/brace-diary/list', method: 'POST', data: {} })
+}
+
+function getBraceDiaryDetail(id) {
+  return request({ path: '/api/brace-diary/detail', method: 'POST', data: { id } })
+}
+
+function createBraceDiary(data) {
+  return request({ path: '/api/brace-diary/create', method: 'POST', data })
+}
+
+function updateBraceDiary(data) {
+  return request({ path: '/api/brace-diary/update', method: 'POST', data })
+}
+
+function deleteBraceDiary(id) {
+  return request({ path: '/api/brace-diary/delete', method: 'POST', data: { _id: id } })
 }
 
 module.exports = {
   BASE_URL,
+  getOpenid,
   request,
   getWxContext,
   genPersonalInfo,
@@ -161,4 +218,6 @@ module.exports = {
   getExamMeta, getExamQuestions,
   getMessages, postMessage,
   getScoreInfo, scoreCheckin,
+  getBraceDiaryList, getBraceDiaryDetail,
+  createBraceDiary, updateBraceDiary, deleteBraceDiary,
 }

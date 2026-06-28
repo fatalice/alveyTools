@@ -1,0 +1,98 @@
+page { background: #f5f6fa; }
+
+.page { padding: 32rpx; min-height: 100vh; }
+
+.section {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.time-row { display: flex; gap: 20rpx; }
+.time-btn {
+  background: #f5f6fa;
+  padding: 16rpx 28rpx;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 心情 */
+.mood-grid { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.mood-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  border-radius: 12rpx;
+  border: 2rpx solid #eee;
+  min-width: 100rpx;
+}
+.mood-item:active { background: #f0f0f0; }
+.mood-active { border-color: #07c160; background: #e8f8ef; }
+.mood-emoji { font-size: 40rpx; margin-bottom: 6rpx; }
+.mood-label { font-size: 22rpx; color: #666; }
+.mood-active .mood-label { color: #07c160; }
+
+/* 文字 */
+.content-input {
+  width: 100%;
+  height: 200rpx;
+  font-size: 28rpx;
+  line-height: 1.6;
+  padding: 0;
+}
+.char-count { text-align: right; font-size: 22rpx; color: #ccc; margin-top: 8rpx; }
+
+/* 图片 */
+.img-grid { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.img-item { position: relative; width: 180rpx; height: 180rpx; }
+.img-thumb { width: 100%; height: 100%; border-radius: 12rpx; }
+.img-remove {
+  position: absolute;
+  top: -12rpx;
+  right: -12rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.img-add {
+  width: 180rpx;
+  height: 180rpx;
+  border: 2rpx dashed #ccc;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.img-add-icon { font-size: 48rpx; color: #ccc; }
+.img-add-text { font-size: 22rpx; color: #ccc; }
+
+/* 提交 */
+.submit-btn {
+  margin-top: 40rpx;
+  background: #07c160;
+  color: #fff;
+  text-align: center;
+  padding: 24rpx;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+.submit-btn:active { opacity: 0.85; }
+.disabled { opacity: 0.5; pointer-events: none; }

@@ -5,10 +5,15 @@
     "pages/toolbox/index",
     "pages/exam-list/index",
     "pages/ai-exam/index",
+    "pages/notebook-list/index",
+    "pages/notebook-view/index",
     "pages/sheep-circle/index",
     "pages/sheep-circle/message-board/index",
     "pages/sheep-circle/exchange/index",
     "pages/sheep-circle/notices/index",
+    "pages/sheep-circle/brace-diary/index",
+    "pages/sheep-circle/brace-diary/edit",
+    "pages/sheep-circle/brace-diary/detail",
     "pages/example/index"
   ],
   "window": {
@@ -39,6 +44,7 @@
     ]
   },
   "sitemapLocation": "sitemap.json",
+  "cloud": true,
   "style": "v2",
   "lazyCodeLoading": "requiredComponents"
 }

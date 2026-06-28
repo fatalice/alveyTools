@@ -1,0 +1,35 @@
+<view class="page" wx:if="{{detail}}">
+  <!-- 操作按钮 -->
+  <view class="actions">
+    <view class="action-btn" bindtap="onEdit">编辑</view>
+    <view class="action-btn action-delete" bindtap="onDelete">删除</view>
+  </view>
+
+  <!-- 文字内容 -->
+  <view class="content-card" wx:if="{{detail.content}}">
+    <text class="detail-content" user-select>{{detail.content}}</text>
+  </view>
+
+  <!-- 心情 -->
+  <view class="mood-card">
+    <text class="detail-mood">{{detail.moodEmoji}} {{detail.moodLabel}}</text>
+  </view>
+
+  <!-- 图片 -->
+  <view class="images-card" wx:if="{{detail.images.length > 0}}">
+    <view class="img-grid">
+      <image class="detail-img" wx:for="{{detail.images}}" wx:key="*this" src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="onPreviewImage" />
+    </view>
+  </view>
+
+  <!-- 发生时间 -->
+  <view class="time-card">
+    <view class="detail-label">发生时间</view>
+    <view class="detail-time">{{detail.timeText}}</view>
+  </view>
+
+  <!-- 底部信息 -->
+  <view class="footer-info">
+    <text>记录于 {{detail.createdText}}</text>
+  </view>
+</view>

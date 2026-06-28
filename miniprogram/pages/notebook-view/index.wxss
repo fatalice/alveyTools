@@ -1,0 +1,72 @@
+page {
+  background-color: #1e1e2e;
+}
+
+.page {
+  padding: 24rpx;
+  min-height: 100vh;
+}
+
+.cell-card {
+  background: #282a36;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+  border: 1rpx solid #3a3d4d;
+}
+
+.cell-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 24rpx;
+  background: #2d2f3f;
+  border-bottom: 1rpx solid #3a3d4d;
+}
+
+.cell-type {
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 6rpx;
+  font-weight: 500;
+}
+
+.type-code {
+  background: #3b4252;
+  color: #88c0d0;
+}
+
+.type-md {
+  background: #3b4252;
+  color: #a3be8c;
+}
+
+.cell-index {
+  font-size: 22rpx;
+  color: #666;
+}
+
+.cell-body-scroll {
+  width: 100%;
+}
+
+.cell-body {
+  padding: 24rpx;
+  min-width: max-content;
+}
+
+.cell-source {
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 24rpx;
+  line-height: 1.7;
+  color: #f8f8f2;
+  white-space: pre;
+  word-break: break-all;
+}
+
+.empty {
+  text-align: center;
+  padding: 120rpx 0;
+  color: #666;
+  font-size: 28rpx;
+}

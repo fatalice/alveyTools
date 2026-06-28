@@ -17,12 +17,12 @@
       <view class="card-status" wx:if="{{item.status}}">{{item.status}}</view>
     </view>
     <view class="card-footer">
-      <text class="card-meta">总分{{item.totalScore}}分</text>
-      <text class="card-meta">共{{item.questionCount}}道题</text>
+      <text class="card-meta" wx:if="{{item.totalScore}}">总分{{item.totalScore}}分</text>
+      <text class="card-meta">共{{item.questionCount}}{{item.id === 'ai-trainer-practice' ? '个文件' : '道题'}}</text>
     </view>
   </view>
 
-  <view class="empty-tip" wx:if="{{examList.length <= 1}}">
+  <view class="empty-tip" wx:if="{{examList.length <= 2}}">
     <text>更多考试科目即将上线...</text>
   </view>
 </view>
