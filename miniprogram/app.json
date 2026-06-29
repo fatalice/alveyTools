@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/my/index",
     "pages/toolbox/index",
+    "pages/toolbox/exchange-rate/index",
     "pages/exam-list/index",
     "pages/ai-exam/index",
     "pages/notebook-list/index",

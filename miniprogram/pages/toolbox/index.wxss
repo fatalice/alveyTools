@@ -1,44 +1,50 @@
-/**pages/toolbox/index.wxss**/
+page { background: #f5f6fa; }
 
-page {
-  background-color: #f6f6f6;
+.page { padding: 32rpx; min-height: 100vh; }
+
+.header { padding: 20rpx 0 40rpx; }
+.header-title {
+  display: block;
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 8rpx;
 }
+.header-desc { font-size: 26rpx; color: #999; }
 
-.container {
-  padding: 40rpx;
+.tool-list { display: flex; flex-direction: column; gap: 20rpx; }
+
+.tool-card {
   display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  align-items: center;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 32rpx 28rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 24rpx;
-}
+.tool-card:active { transform: scale(0.98); }
 
-.grid-item {
-  background-color: #fff;
-  border-radius: 16rpx;
-  padding: 48rpx 24rpx;
+.tool-icon-wrap {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 20rpx;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
 }
 
-.grid-item:active {
-  background-color: #f0f0f0;
-}
+.tool-icon { font-size: 48rpx; }
 
-.grid-icon {
-  font-size: 72rpx;
-  margin-bottom: 16rpx;
+.tool-info { flex: 1; margin-left: 28rpx; }
+.tool-name {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-bottom: 6rpx;
 }
+.tool-desc { font-size: 24rpx; color: #999; }
 
-.grid-name {
-  font-size: 30rpx;
-  color: #333;
-  font-weight: 500;
-}
+.tool-arrow { font-size: 40rpx; color: #ccc; flex-shrink: 0; }
