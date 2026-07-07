@@ -1,6 +1,10 @@
 const api = require('../../../utils/api')
 
-const USERID_KEY = 'alvey_user_id'
+const DEFAULT_PRIZES = [
+  { id: 'ticket', name: '1000公里机票', emoji: '✈️', cost: 100 },
+  { id: 'camera', name: '富士XT50套机', emoji: '📷', cost: 300 },
+  { id: 'cash', name: '1000元现金', emoji: '💰', cost: 200 },
+]
 
 function formatTime(ts) {
   const d = new Date(ts)
@@ -15,22 +19,30 @@ Page({
   data: {
     totalScore: 0,
     records: [],
-    prizes: [
-      { id: 'ticket', name: '1000公里机票', emoji: '✈️', cost: 100 },
-      { id: 'camera', name: '富士XT50套机', emoji: '📷', cost: 300 },
-      { id: 'cash', name: '1000元现金', emoji: '💰', cost: 200 },
-    ],
+    prizes: [],
   },
 
   onShow() {
+    this.fetchPrizes()
     this.fetchScore()
     this.fetchRecords()
   },
 
+  async fetchPrizes() {
+    try {
+      const res = await api.request({ path: '/api/prizes/list', method: 'POST', data: {} })
+      const data = res.data || res
+      const prizes = data.prizes || []
+      this.setData({ prizes: prizes.length ? prizes : DEFAULT_PRIZES })
+    } catch (err) {
+      console.error('fetchPrizes failed:', err)
+      this.setData({ prizes: DEFAULT_PRIZES })
+    }
+  },
+
   async fetchScore() {
     try {
-      const userId = wx.getStorageSync(USERID_KEY)
-      const res = await api.getScoreInfo({ userId })
+      const res = await api.getScoreInfo()
       const data = res.data || res
       this.setData({ totalScore: data.total || 0 })
     } catch (err) {
@@ -40,8 +52,7 @@ Page({
 
   async fetchRecords() {
     try {
-      const userId = wx.getStorageSync(USERID_KEY)
-      const res = await api.request({ path: '/api/score/exchange/records', method: 'POST', data: { userId } })
+      const res = await api.request({ path: '/api/score/exchange/records', method: 'POST', data: {} })
       const data = res.data || res
       const records = (data.records || []).map(r => ({
         ...r,
@@ -69,11 +80,10 @@ Page({
   async doExchange(item) {
     wx.showLoading({ title: '兑换中...', mask: true })
     try {
-      const userId = wx.getStorageSync(USERID_KEY)
       const res = await api.request({
         path: '/api/score/exchange',
         method: 'POST',
-        data: { userId, prizeId: item.id, prizeName: item.name, cost: item.cost },
+        data: { prizeId: item.id, prizeName: item.name, cost: item.cost },
       })
       wx.hideLoading()
       const data = res.data || res
