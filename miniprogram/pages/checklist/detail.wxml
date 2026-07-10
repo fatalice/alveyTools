@@ -1,0 +1,60 @@
+<view class="page" wx:if="{{checklist}}">
+  <!-- Info Card -->
+  <view class="info-card">
+    <view class="info-top">
+      <view class="info-label">我的清单</view>
+      <view class="favorite-btn {{isFavorite ? 'active' : ''}}" wx:if="{{showFavorite}}" bindtap="onToggleFavorite">
+        {{isFavorite ? '已收藏' : '收藏'}}
+      </view>
+    </view>
+    <view class="info-title-row">
+      <text class="info-title">{{checklist.title}}</text>
+      <view class="title-edit-btn" bindtap="onEditTitle">✏️</view>
+    </view>
+    <text class="info-desc" wx:if="{{checklist.description}}">{{checklist.description}}</text>
+  </view>
+
+  <!-- Progress Card -->
+  <view class="progress-card">
+    <view class="progress-row">
+      <view class="progress-left">
+        <view class="progress-numbers">
+          <text class="progress-done">{{doneItems}}</text>
+          <text class="progress-sep"> / </text>
+          <text class="progress-total">{{totalItems}}</text>
+        </view>
+        <text class="progress-subtitle">已完成事项</text>
+      </view>
+      <view class="progress-right">
+        <text class="progress-pending">{{pendingItems}} 项待确认</text>
+      </view>
+    </view>
+    <view class="progress-bar-bg">
+      <view class="progress-bar-fill" style="width: {{progressPercent}}%"></view>
+    </view>
+  </view>
+
+  <!-- Quick Actions -->
+  <view class="actions">
+    <view class="action-btn action-btn--filled" bindtap="onEdit">编辑清单</view>
+    <view class="action-btn action-btn--outline" bindtap="onReset">重置进度</view>
+  </view>
+
+  <!-- Groups -->
+  <view class="group-card" wx:for="{{groups}}" wx:key="id" wx:for-item="group">
+    <view class="group-header">
+      <text class="group-name">{{group.name}}</text>
+      <text class="group-progress">{{group.doneCount}}/{{group.totalCount}}</text>
+    </view>
+    <view class="item-row" wx:for="{{group.items}}" wx:key="id" wx:for-item="item"
+      data-group-id="{{group.id}}" data-item-id="{{item.id}}" bindtap="onToggleItem">
+      <view class="checkbox {{item.completed ? 'checked' : ''}}">
+        <text class="checkmark" wx:if="{{item.completed}}">✓</text>
+      </view>
+      <text class="item-text {{item.completed ? 'done' : ''}}">{{item.title}}</text>
+    </view>
+  </view>
+
+  <!-- Bottom spacer -->
+  <view class="bottom-spacer"></view>
+</view>

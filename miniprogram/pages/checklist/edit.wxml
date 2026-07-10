@@ -1,0 +1,51 @@
+<view class="page">
+  <!-- Info Section -->
+  <view class="info-card">
+    <view class="info-label">我的清单</view>
+    <view class="title-row">
+      <input class="title-input" value="{{checklist.title}}" bindinput="onTitleChange" placeholder="清单标题"/>
+    </view>
+    <input class="desc-input" value="{{checklist.description}}" bindinput="onDescChange" placeholder="添加描述"/>
+    <view class="category-row" wx:if="{{checklist.category}}">
+      <text class="category-label">分类</text>
+      <text class="category-value">{{checklist.category}}</text>
+    </view>
+  </view>
+
+  <!-- Items Header -->
+  <view class="items-header">
+    <text class="items-count">清单事项 {{totalItems}}项</text>
+    <view class="restore-btn" bindtap="onRestoreDefaults" wx:if="{{checklist.defaultSnapshot}}">
+      <text>恢复全部默认项</text>
+    </view>
+  </view>
+
+  <!-- Groups -->
+  <view class="group-card" wx:for="{{checklist.groups}}" wx:key="id" wx:for-item="group" wx:for-index="groupIdx">
+    <view class="group-header">
+      <text class="group-name">{{group.name}}</text>
+      <view class="group-menu" data-group-id="{{group.id}}" data-group-idx="{{groupIdx}}" bindtap="onGroupMenu">···</view>
+    </view>
+    <view class="edit-item" wx:for="{{group.items}}" wx:key="id" wx:for-item="item" wx:for-index="itemIdx">
+      <text class="edit-item-text">{{item.title}}</text>
+      <view class="delete-btn" data-group-id="{{group.id}}" data-item-id="{{item.id}}" bindtap="onDeleteItem">×</view>
+    </view>
+    <view class="add-item-row" data-group-id="{{group.id}}" data-group-idx="{{groupIdx}}" bindtap="onAddItem">
+      <text class="add-item-text">+ 添加事项</text>
+    </view>
+  </view>
+
+  <!-- Add Group -->
+  <view class="add-group" bindtap="onAddGroup">
+    <text>+ 添加分组</text>
+  </view>
+
+  <!-- Bottom Space -->
+  <view class="bottom-space"></view>
+
+  <!-- Bottom Bar -->
+  <view class="bottom-bar">
+    <view class="bar-btn bar-btn--cancel" bindtap="onCancel">取消</view>
+    <view class="bar-btn bar-btn--save" bindtap="onSave">保存</view>
+  </view>
+</view>

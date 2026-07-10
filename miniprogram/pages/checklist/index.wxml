@@ -1,0 +1,81 @@
+<view class="page">
+  <!-- Brand -->
+  <view class="brand">羊羊清单</view>
+
+  <!-- Hero Card -->
+  <view class="hero-card">
+    <view class="hero-text">
+      <view class="hero-title">把要带、要办、要确认的事放进一张清单</view>
+      <view class="hero-desc">出门前、搬家时、开学前，把容易忘的事先列好。</view>
+    </view>
+    <view class="hero-icon">📋</view>
+  </view>
+
+  <!-- New Checklist Button -->
+  <view class="new-btn" bindtap="onNewChecklist">+ 新建清单</view>
+
+  <!-- Quick Actions -->
+  <view class="quick-actions">
+    <view class="quick-item" bindtap="onFromScenario">
+      <text class="quick-icon">📦</text>
+      <view class="quick-info">
+        <text class="quick-name">从场景开始</text>
+        <text class="quick-desc">按场景快速创建</text>
+      </view>
+    </view>
+    <view class="quick-item" bindtap="onCustomCreate">
+      <text class="quick-icon">✏️</text>
+      <view class="quick-info">
+        <text class="quick-name">自定义清单</text>
+        <text class="quick-desc">自由创建</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- Search Bar -->
+  <view class="search-bar" bindtap="onSearchTap">
+    <text class="search-icon">🔍</text>
+    <text class="search-placeholder">搜索场景或清单</text>
+  </view>
+
+  <!-- Continue Section -->
+  <view class="section" wx:if="{{continueList.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">继续完成</text>
+      <text class="section-more" bindtap="onContinueAll">全部 ›</text>
+    </view>
+    <view class="continue-card" wx:for="{{continueList}}" wx:key="id" data-id="{{item.id}}" bindtap="onContinueTap">
+      <view class="continue-icon">🧳</view>
+      <view class="continue-info">
+        <text class="continue-name">{{item.title}}</text>
+        <view class="continue-meta">
+          <text class="continue-progress">{{item.progressText}}</text>
+          <text class="continue-time">上次使用：今天</text>
+        </view>
+      </view>
+      <view class="continue-btn">继续</view>
+    </view>
+  </view>
+
+  <!-- Common Scenarios -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">常用场景</text>
+      <text class="section-more" bindtap="onFromScenario">更多场景 ›</text>
+    </view>
+    <view class="scenario-card" wx:for="{{scenarioList}}" wx:key="id" data-id="{{item.id}}" bindtap="onScenarioTap">
+      <view class="scenario-icon">🧳</view>
+      <view class="scenario-info">
+        <text class="scenario-name">{{item.title}}</text>
+        <text class="scenario-count">{{item.itemCount}}项</text>
+      </view>
+      <text class="scenario-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- Bottom padding for tabbar -->
+  <view class="bottom-space"></view>
+
+  <!-- Custom Tab Bar -->
+  <checklist-tabbar active="{{0}}"></checklist-tabbar>
+</view>

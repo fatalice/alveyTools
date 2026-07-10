@@ -1,0 +1,45 @@
+<view class="page">
+  <!-- Overview Card -->
+  <view class="overview-card">
+    <view class="overview-info">
+      <text class="overview-title">本地清单管理</text>
+      <text class="overview-desc">所有数据仅保存在本机</text>
+    </view>
+    <view class="overview-badge">{{checklistCount}}</view>
+  </view>
+
+  <!-- Menu List -->
+  <view class="menu-list">
+    <view class="menu-item" data-type="list" bindtap="onMenuTap">
+      <text class="menu-icon">📋</text>
+      <text class="menu-name">我的清单</text>
+      <text class="menu-count">{{checklistCount}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" data-type="favorites" bindtap="onMenuTap">
+      <text class="menu-icon">⭐</text>
+      <text class="menu-name">收藏场景</text>
+      <text class="menu-count">{{favoriteCount}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" data-type="templates" bindtap="onMenuTap">
+      <text class="menu-icon">📝</text>
+      <text class="menu-name">自定义模板</text>
+      <text class="menu-count">{{customTemplateCount}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" data-type="edited" bindtap="onMenuTap">
+      <text class="menu-icon">✏️</text>
+      <text class="menu-name">已编辑清单</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item" data-type="data-info" bindtap="onMenuTap">
+      <text class="menu-icon">💾</text>
+      <text class="menu-name">本地数据说明</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+  <checklist-tabbar active="{{2}}"></checklist-tabbar>
+</view>

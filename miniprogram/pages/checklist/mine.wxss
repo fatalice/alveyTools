@@ -1,0 +1,102 @@
+.page {
+  background: #faf8f5;
+  padding: 32rpx;
+  padding-top: 20rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Overview Card */
+.overview-card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 40rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+  margin-bottom: 32rpx;
+}
+
+.overview-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.overview-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #1a1a2e;
+}
+
+.overview-desc {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+.overview-badge {
+  background: #1a6b4a;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+  min-width: 56rpx;
+  height: 56rpx;
+  border-radius: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16rpx;
+  box-sizing: border-box;
+}
+
+/* Menu List */
+.menu-list {
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 32rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:active {
+  background: #f9f9f9;
+}
+
+.menu-icon {
+  font-size: 36rpx;
+  margin-right: 20rpx;
+}
+
+.menu-name {
+  flex: 1;
+  font-size: 30rpx;
+  color: #1a1a2e;
+}
+
+.menu-count {
+  font-size: 24rpx;
+  color: #999;
+  margin-right: 16rpx;
+}
+
+.menu-arrow {
+  font-size: 32rpx;
+  color: #ccc;
+}
+
+.bottom-space {
+  height: 140rpx;
+}

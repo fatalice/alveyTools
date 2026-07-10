@@ -15,7 +15,14 @@
     "pages/sheep-circle/brace-diary/index",
     "pages/sheep-circle/brace-diary/edit",
     "pages/sheep-circle/brace-diary/detail",
-    "pages/example/index"
+    "pages/example/index",
+    "pages/checklist/index",
+    "pages/checklist/detail",
+    "pages/checklist/edit",
+    "pages/checklist/scenarios",
+    "pages/checklist/mine",
+    "pages/checklist/list",
+    "pages/checklist/search"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",

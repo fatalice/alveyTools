@@ -35,3 +35,7 @@ export function getUsers() {
 export function addScore(userId, points, desc) {
   return http.post('/admin/score/add', { userId, points, desc }).then(r => r.data)
 }
+
+export function getScoreDetail(userId) {
+  return http.post('/admin/score/detail', { userId }).then(r => r.data)
+}

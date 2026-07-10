@@ -1,0 +1,51 @@
+<view class="page">
+  <!-- Search Bar -->
+  <view class="search-bar">
+    <text class="search-icon">🔍</text>
+    <input class="search-input" placeholder="搜索场景或清单" value="{{keyword}}"
+      bindinput="onSearchInput" confirm-type="search" bindconfirm="onSearchConfirm" focus="{{true}}"/>
+    <text class="search-btn" bindtap="onSearchConfirm">搜索</text>
+    <text class="search-clear" wx:if="{{keyword}}" bindtap="onClearKeyword">×</text>
+  </view>
+
+  <!-- Results -->
+  <block wx:if="{{hasSearched}}">
+    <!-- Scenario Results -->
+    <view class="result-section" wx:if="{{scenarioResults.length > 0}}">
+      <view class="section-title">场景</view>
+      <view class="scenario-card" wx:for="{{scenarioResults}}" wx:key="id" data-id="{{item.id}}" bindtap="onScenarioTap">
+        <view class="card-icon">🧳</view>
+        <view class="card-body">
+          <text class="card-title">{{item.title}}</text>
+          <text class="card-desc">{{item.description}}</text>
+          <text class="card-meta">{{item.itemCount}}项</text>
+        </view>
+        <text class="card-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- Checklist Results -->
+    <view class="result-section" wx:if="{{checklistResults.length > 0}}">
+      <view class="section-title">我的清单</view>
+      <view class="scenario-card" wx:for="{{checklistResults}}" wx:key="id" data-id="{{item.id}}" bindtap="onChecklistTap">
+        <view class="card-icon">📋</view>
+        <view class="card-body">
+          <text class="card-title">{{item.title}}</text>
+          <text class="card-meta">{{item.subtitle}}</text>
+        </view>
+        <text class="card-arrow">›</text>
+      </view>
+    </view>
+
+    <!-- No Results -->
+    <view class="empty-state" wx:if="{{scenarioResults.length === 0 && checklistResults.length === 0}}">
+      <text class="empty-icon">🔍</text>
+      <text class="empty-text">未找到相关结果</text>
+    </view>
+  </block>
+
+  <!-- Initial State -->
+  <view class="hint-state" wx:else>
+    <text class="hint-text">输入关键词搜索场景或清单</text>
+  </view>
+</view>

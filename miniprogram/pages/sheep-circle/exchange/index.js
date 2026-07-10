@@ -32,7 +32,7 @@ Page({
     try {
       const res = await api.request({ path: '/api/prizes/list', method: 'POST', data: {} })
       const data = res.data || res
-      const prizes = data.prizes || []
+      const prizes = (data.prizes || []).sort((a, b) => a.cost - b.cost)
       this.setData({ prizes: prizes.length ? prizes : DEFAULT_PRIZES })
     } catch (err) {
       console.error('fetchPrizes failed:', err)

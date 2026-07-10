@@ -1,0 +1,116 @@
+.page {
+  background: #faf8f5;
+  padding: 32rpx;
+  padding-top: 20rpx;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.list {
+  width: 100%;
+}
+
+.list-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
+  margin-bottom: 16rpx;
+  transition: transform 0.15s ease;
+}
+
+.list-card:active {
+  transform: scale(0.98);
+}
+
+.card-icon {
+  width: 72rpx;
+  height: 72rpx;
+  background: #e8f5ec;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-title-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #1a1a2e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-tag {
+  background: #e8f5ec;
+  color: #1a6b4a;
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+  margin-left: 12rpx;
+  flex-shrink: 0;
+}
+
+.card-subtitle {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+  display: block;
+}
+
+.card-delete {
+  background: #fff0f0;
+  color: #e74c3c;
+  font-size: 24rpx;
+  padding: 12rpx 20rpx;
+  border-radius: 8rpx;
+  align-self: center;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 200rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+  margin-top: 24rpx;
+}
+
+.empty-btn {
+  background: #1a6b4a;
+  color: #fff;
+  font-size: 28rpx;
+  padding: 20rpx 48rpx;
+  border-radius: 12rpx;
+  margin-top: 40rpx;
+  display: inline-block;
+}

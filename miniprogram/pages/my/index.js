@@ -1,20 +1,6 @@
 const api = require('../../utils/api')
 
-const USERID_KEY = 'alvey_user_id'
 const TOKEN_KEY = 'alvey_logged_in'
-
-function generateUserId() {
-  return 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
-}
-
-function ensureUserId() {
-  let uid = wx.getStorageSync(USERID_KEY)
-  if (!uid) {
-    uid = generateUserId()
-    wx.setStorageSync(USERID_KEY, uid)
-  }
-  return uid
-}
 
 function isLoggedIn() {
   return !!wx.getStorageSync(TOKEN_KEY)
@@ -37,6 +23,7 @@ Page({
     pendingAvatar: '',
     pendingNickname: '',
     submitting: false,
+    editMode: false,
 
     totalScore: 0,
     scoreRecords: [],
@@ -62,8 +49,7 @@ Page({
 
   async fetchProfile() {
     try {
-      const userId = ensureUserId()
-      const res = await api.genPersonalInfo(userId)
+      const res = await api.genPersonalInfo()
       const info = res.data || res
       this.setData({ isLoggedIn: true, userInfo: info })
     } catch (err) {
@@ -73,8 +59,7 @@ Page({
 
   async fetchScore() {
     try {
-      const userId = ensureUserId()
-      const res = await api.getScoreInfo({ userId })
+      const res = await api.getScoreInfo()
       const data = res.data || res
       const records = (data.records || []).map(r => ({
         ...r,
@@ -101,8 +86,7 @@ Page({
       return
     }
     try {
-      const userId = ensureUserId()
-      const res = await api.scoreCheckin({ userId })
+      const res = await api.scoreCheckin()
       const data = res.data || res
       if (data.alreadyChecked) {
         wx.showToast({ title: '今天已签到', icon: 'none' })
@@ -117,8 +101,17 @@ Page({
   },
 
   onLogin() {
-    ensureUserId()
-    this.setData({ loginVisible: true, pendingAvatar: '', pendingNickname: '' })
+    this.setData({ loginVisible: true, pendingAvatar: '', pendingNickname: '', editMode: false })
+  },
+
+  onEditProfile() {
+    const { userInfo } = this.data
+    this.setData({
+      loginVisible: true,
+      pendingAvatar: userInfo.image || userInfo.avatarUrl || '',
+      pendingNickname: userInfo.name || '',
+      editMode: true,
+    })
   },
 
   onLoginClose() {
@@ -153,23 +146,23 @@ Page({
     wx.showLoading({ title: '登录中...', mask: true })
 
     try {
-      const userId = ensureUserId()
-
       let avatarUrl = pendingAvatar
       try {
-        const uploadRes = await wx.cloud.uploadFile({
-          cloudPath: `avatars/${userId}_${Date.now()}.png`,
-          filePath: pendingAvatar,
+        const fs = wx.getFileSystemManager()
+        const base64 = fs.readFileSync(pendingAvatar, 'base64')
+        const uploadRes = await api.request({
+          path: '/api/upload',
+          method: 'POST',
+          data: { filename: 'avatar.png', data: base64, scene: 'avatar' },
         })
-        avatarUrl = uploadRes.fileID
+        avatarUrl = (uploadRes.data && uploadRes.data.url) || avatarUrl
       } catch (e) {
         console.warn('avatar upload failed, using temp path', e)
       }
 
       const res = await api.savePersonalInfo({
-        userId,
         name: pendingNickname.trim(),
-        avatarFileID: avatarUrl,
+        avatarUrl: avatarUrl,
       })
 
       wx.setStorageSync(TOKEN_KEY, true)

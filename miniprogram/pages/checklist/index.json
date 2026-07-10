@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "羊羊清单",
+  "navigationBarBackgroundColor": "#faf8f5",
+  "usingComponents": {
+    "checklist-tabbar": "/components/checklist-tabbar/index"
+  }
+}

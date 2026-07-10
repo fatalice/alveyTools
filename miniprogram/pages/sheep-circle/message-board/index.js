@@ -1,6 +1,5 @@
 const api = require('../../../utils/api')
 
-const USERID_KEY = 'alvey_user_id'
 const TOKEN_KEY = 'alvey_logged_in'
 
 function formatTime(ts) {
@@ -83,9 +82,7 @@ Page({
 
     this.setData({ submitting: true })
     try {
-      const userId = wx.getStorageSync(USERID_KEY)
       const res = await api.postMessage({
-        userId,
         content: postContent.trim(),
         color: postColor,
       })
@@ -96,9 +93,7 @@ Page({
       this.loadMessages()
     } catch (err) {
       console.error('post message failed:', err)
-      // 本地模拟添加
       const { messages } = this.data
-      const userId = wx.getStorageSync(USERID_KEY)
       messages.unshift({
         _id: 'local_' + Date.now(),
         content: postContent.trim(),

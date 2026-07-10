@@ -4,8 +4,8 @@
   <!-- 顶部个人信息卡片 -->
   <view class="header-card">
     <!-- 已登录 -->
-    <view class="profile" wx:if="{{isLoggedIn}}">
-      <t-avatar image="{{userInfo.image || userInfo.avatarFileID}}" size="128rpx" shape="circle" />
+    <view class="profile" wx:if="{{isLoggedIn}}" bindtap="onEditProfile">
+      <t-avatar image="{{userInfo.image || userInfo.avatarUrl}}" size="128rpx" shape="circle" />
       <view class="profile-info">
         <view class="profile-name">{{userInfo.name || '用户'}}</view>
         <view class="profile-tags">
@@ -90,7 +90,7 @@
 <!-- 登录弹窗 -->
 <t-popup visible="{{loginVisible}}" placement="bottom" bind:visible-change="onLoginPopupChange">
   <view class="login-popup">
-    <view class="login-popup__title">设置头像和昵称</view>
+    <view class="login-popup__title">{{editMode ? '修改头像和昵称' : '设置头像和昵称'}}</view>
     <view class="login-popup__avatar-row">
       <button class="login-popup__avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
         <t-avatar wx:if="{{pendingAvatar}}" image="{{pendingAvatar}}" size="160rpx" shape="circle" />

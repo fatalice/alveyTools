@@ -1,0 +1,38 @@
+<view class="page">
+  <!-- Search -->
+  <view class="search-bar">
+    <text class="search-icon">🔍</text>
+    <input class="search-input" placeholder="搜索场景" value="{{keyword}}" bindinput="onSearchInput" confirm-type="search"/>
+    <text class="search-clear" wx:if="{{keyword}}" bindtap="onClearSearch">×</text>
+  </view>
+
+  <!-- Category Tabs -->
+  <scroll-view class="category-tabs" scroll-x>
+    <view class="cat-item {{activeCategory === item.id ? 'active' : ''}}"
+      wx:for="{{categories}}" wx:key="id" data-id="{{item.id}}" bindtap="onCategoryTap">
+      {{item.name}}
+    </view>
+  </scroll-view>
+
+  <!-- Scenario Cards -->
+  <view class="scenario-list" wx:if="{{scenarioList.length > 0}}">
+    <view class="scenario-card" wx:for="{{scenarioList}}" wx:key="id" data-id="{{item.id}}" bindtap="onScenarioTap">
+      <view class="scenario-icon">🧳</view>
+      <view class="scenario-info">
+        <view class="scenario-title">{{item.title}}</view>
+        <view class="scenario-desc">{{item.description}}</view>
+        <view class="scenario-meta">{{item.itemCount}}项 · {{item.groups.length}}组</view>
+      </view>
+      <view class="scenario-arrow">›</view>
+    </view>
+  </view>
+
+  <!-- Empty State -->
+  <view class="empty-state" wx:else>
+    <text class="empty-icon">📭</text>
+    <text class="empty-text">暂无场景</text>
+  </view>
+
+  <view class="bottom-space"></view>
+  <checklist-tabbar active="{{1}}"></checklist-tabbar>
+</view>

@@ -36,6 +36,7 @@ async function loadQuestions() {
 
   // 从云端拉取
   const metaRes = await api.getExamMeta()
+  console.log('[exam] metaRes:', metaRes)
   _meta = metaRes.data || metaRes
 
   const total = _meta.total || 900
@@ -44,9 +45,12 @@ async function loadQuestions() {
 
   for (let offset = 0; offset < total; offset += PAGE_SIZE) {
     const res = await api.getExamQuestions({ type: 'all', offset, limit: PAGE_SIZE })
+    console.log(`[exam] batch offset=${offset}, got:`, (res.data && res.data.questions || res.questions || []).length)
     const qs = (res.data && res.data.questions) || res.questions || []
     allQuestions.push(...qs)
   }
+
+  console.log('[exam] total loaded:', allQuestions.length)
 
   _questions = allQuestions
   _loaded = true
