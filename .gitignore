@@ -14,3 +14,20 @@ Thumbs.db
 
 # Private config (contains local paths)
 project.private.config.json
+
+# AI tool configs (never commit)
+.claude/
+.agents/
+.mcp.json
+CLAUDE.md
+AGENTS.md
+.cursorrules
+.cursor/
+.windsurfrules
+.codebuddy/
+.clinerules
+.aider*
+.gemini/
+.kiro/
+.trae/
+.qoder/
