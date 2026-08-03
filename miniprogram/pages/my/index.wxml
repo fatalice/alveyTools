@@ -54,7 +54,7 @@
         <text class="score-record__desc">{{item.desc}}</text>
         <text class="score-record__time">{{item.timeText}}</text>
       </view>
-      <text class="score-record__points">+{{item.points}}</text>
+      <text class="score-record__points">{{item.points > 0 ? '+' : ''}}{{item.points}}</text>
     </view>
     <view class="score-record--empty" wx:if="{{scoreRecords.length === 0}}">
       <text>暂无记录，签到可获得积分</text>
