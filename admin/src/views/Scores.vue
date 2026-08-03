@@ -1,8 +1,13 @@
 <template>
-  <div class="scores-page">
+  <div class="panel">
     <t-table :data="users" :columns="columns" row-key="userId" :loading="loading" />
 
-    <t-dialog v-model:visible="dialogVisible" header="手动加分" @confirm="onConfirmAdd" :confirm-btn="{ loading: adding }">
+    <t-dialog
+      v-model:visible="dialogVisible"
+      header="手动加分"
+      @confirm="onConfirmAdd"
+      :confirm-btn="{ loading: adding }"
+    >
       <t-form>
         <t-form-item label="用户">
           <t-input :value="selectedUser.name + ' (' + selectedUser.userId + ')'" disabled />
@@ -20,7 +25,7 @@
 
 <script setup>
 import { ref, onMounted, h } from 'vue'
-import { Button as TButton } from 'tdesign-vue-next'
+import { Button as TButton, MessagePlugin } from 'tdesign-vue-next'
 import { getUsers, addScore } from '../api'
 
 const users = ref([])
@@ -36,8 +41,11 @@ const columns = [
   { colKey: 'userId', title: '用户ID', ellipsis: true },
   { colKey: 'totalScore', title: '总积分', width: 100 },
   {
-    colKey: 'op', title: '操作', width: 100,
-    cell: (_, { row }) => h(TButton, { size: 'small', variant: 'text', onClick: () => onAdd(row) }, () => '加分')
+    colKey: 'op',
+    title: '操作',
+    width: 100,
+    cell: (_, { row }) =>
+      h(TButton, { size: 'small', variant: 'text', onClick: () => onAdd(row) }, () => '加分'),
   },
 ]
 
@@ -61,8 +69,13 @@ function onAdd(row) {
 async function onConfirmAdd() {
   adding.value = true
   try {
-    await addScore(selectedUser.value.userId, addPoints.value, addDesc.value || '管理员手动加分')
+    const res = await addScore(selectedUser.value.userId, addPoints.value, addDesc.value || '管理员手动加分')
+    if (res.code !== 200) {
+      MessagePlugin.error(res.message || '加分失败')
+      return
+    }
     dialogVisible.value = false
+    MessagePlugin.success(res.message || '加分成功')
     fetchUsers()
   } finally {
     adding.value = false

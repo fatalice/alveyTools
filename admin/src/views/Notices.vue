@@ -1,12 +1,19 @@
 <template>
-  <div class="notices-page">
+  <div class="panel">
     <div class="toolbar">
-      <t-button theme="primary" @click="onAdd">发布公告</t-button>
+      <div class="toolbar-left">
+        <t-button theme="primary" @click="onAdd">发布公告</t-button>
+      </div>
     </div>
 
     <t-table :data="list" :columns="columns" row-key="_id" :loading="loading" />
 
-    <t-dialog v-model:visible="dialogVisible" :header="editId ? '编辑公告' : '发布公告'" @confirm="onSave" :confirm-btn="{ loading: saving }">
+    <t-dialog
+      v-model:visible="dialogVisible"
+      :header="editId ? '编辑公告' : '发布公告'"
+      @confirm="onSave"
+      :confirm-btn="{ loading: saving }"
+    >
       <t-form>
         <t-form-item label="标题">
           <t-input v-model="form.title" placeholder="公告标题" />
@@ -24,7 +31,7 @@
 
 <script setup>
 import { ref, onMounted, h } from 'vue'
-import { Button as TButton } from 'tdesign-vue-next'
+import { Button as TButton, MessagePlugin } from 'tdesign-vue-next'
 import { getNotices, saveNotice, deleteNotice } from '../api'
 
 const list = ref([])
@@ -37,14 +44,22 @@ const form = ref({ title: '', content: '', pinned: false })
 const columns = [
   { colKey: 'title', title: '标题', width: 200 },
   { colKey: 'content', title: '内容', ellipsis: true },
-  { colKey: 'pinned', title: '置顶', width: 80, cell: (h, { row }) => row.pinned ? '📌' : '-' },
-  { colKey: 'createdAt', title: '时间', width: 160, cell: (h, { row }) => new Date(row.createdAt).toLocaleString() },
+  { colKey: 'pinned', title: '置顶', width: 80, cell: (h, { row }) => (row.pinned ? '是' : '-') },
   {
-    colKey: 'op', title: '操作', width: 160,
-    cell: (_, { row }) => h('div', [
-      h(TButton, { size: 'small', variant: 'text', onClick: () => onEdit(row) }, () => '编辑'),
-      h(TButton, { size: 'small', variant: 'text', theme: 'danger', onClick: () => onDelete(row) }, () => '删除'),
-    ])
+    colKey: 'createdAt',
+    title: '时间',
+    width: 170,
+    cell: (h, { row }) => new Date(row.createdAt).toLocaleString(),
+  },
+  {
+    colKey: 'op',
+    title: '操作',
+    width: 160,
+    cell: (_, { row }) =>
+      h('div', { style: 'display:flex;gap:8px' }, [
+        h(TButton, { size: 'small', variant: 'text', onClick: () => onEdit(row) }, () => '编辑'),
+        h(TButton, { size: 'small', variant: 'text', theme: 'danger', onClick: () => onDelete(row) }, () => '删除'),
+      ]),
   },
 ]
 
@@ -75,7 +90,11 @@ async function onSave() {
   try {
     const data = { ...form.value }
     if (editId.value) data._id = editId.value
-    await saveNotice(data)
+    const res = await saveNotice(data)
+    if (res.code !== 200) {
+      MessagePlugin.error(res.message || '保存失败')
+      return
+    }
     dialogVisible.value = false
     fetchList()
   } finally {
@@ -85,13 +104,13 @@ async function onSave() {
 
 async function onDelete(row) {
   if (!confirm(`确定删除「${row.title}」？`)) return
-  await deleteNotice(row._id)
+  const res = await deleteNotice(row._id)
+  if (res.code !== 200) {
+    MessagePlugin.error(res.message || '删除失败')
+    return
+  }
   fetchList()
 }
 
 onMounted(fetchList)
 </script>
-
-<style scoped>
-.toolbar { margin-bottom: 16px; }
-</style>
