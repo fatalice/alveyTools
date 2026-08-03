@@ -202,6 +202,32 @@ function deleteBraceDiary(id) {
   return request({ path: '/api/brace-diary/delete', method: 'POST', data: { _id: id } })
 }
 
+// ---- 学习笔记 ----
+
+function notesList(data = {}) {
+  return request({ path: '/api/notes', method: 'POST', data: { action: 'list', ...data } })
+}
+
+function noteDetail(id) {
+  return request({ path: '/api/notes', method: 'POST', data: { action: 'detail', _id: id } })
+}
+
+function noteCategories() {
+  return request({ path: '/api/notes', method: 'POST', data: { action: 'categories' } })
+}
+
+function noteCreate(data) {
+  return request({ path: '/api/notes', method: 'POST', data: { action: 'create', ...data } })
+}
+
+function noteUpdate(data) {
+  return request({ path: '/api/notes', method: 'POST', data: { action: 'update', ...data } })
+}
+
+function noteDelete(id) {
+  return request({ path: '/api/notes', method: 'POST', data: { action: 'delete', _id: id } })
+}
+
 module.exports = {
   BASE_URL,
   getOpenid,
@@ -220,4 +246,5 @@ module.exports = {
   getScoreInfo, scoreCheckin,
   getBraceDiaryList, getBraceDiaryDetail,
   createBraceDiary, updateBraceDiary, deleteBraceDiary,
+  notesList, noteDetail, noteCategories, noteCreate, noteUpdate, noteDelete,
 }

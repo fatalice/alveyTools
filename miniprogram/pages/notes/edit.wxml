@@ -1,0 +1,32 @@
+<view class="page">
+  <view class="form">
+    <view class="row">
+      <text class="label">标题</text>
+      <input class="input" value="{{title}}" bindinput="onTitle" placeholder="笔记标题" placeholder-class="ph" />
+    </view>
+
+    <view class="row">
+      <text class="label">分类</text>
+      <picker bindchange="onCategoryChange" value="{{categoryIndex}}" range="{{categoryNames}}">
+        <view class="picker">{{categoryNames[categoryIndex]}}</view>
+      </picker>
+    </view>
+
+    <view class="row row-textarea">
+      <text class="label">内容</text>
+      <textarea
+        class="textarea"
+        value="{{content}}"
+        bindinput="onContent"
+        placeholder="支持纯文本"
+        placeholder-class="ph"
+        auto-height
+        maxlength="-1"
+      />
+    </view>
+  </view>
+
+  <view class="footer">
+    <button class="save-btn" bindtap="onSave" loading="{{saving}}" disabled="{{saving}}">保存</button>
+  </view>
+</view>

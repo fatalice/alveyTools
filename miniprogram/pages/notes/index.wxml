@@ -1,0 +1,39 @@
+<view class="page">
+  <view class="fab" bindtap="onAdd"><text class="fab-icon">+</text></view>
+
+  <!-- 分类筛选 -->
+  <scroll-view scroll-x class="filter-bar" wx:if="{{categories.length > 0}}">
+    <view class="filter-tag {{activeCategory === '' ? 'active' : ''}}" data-id="" bindtap="onCategoryTap">全部</view>
+    <view
+      class="filter-tag {{activeCategory === item._id ? 'active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="_id"
+      data-id="{{item._id}}"
+      bindtap="onCategoryTap"
+    >{{item.name}}</view>
+  </scroll-view>
+
+  <view class="loading" wx:if="{{loading}}"><text>加载中...</text></view>
+
+  <view class="empty" wx:elif="{{list.length === 0}}">
+    <text class="empty-emoji">📒</text>
+    <text class="empty-text">还没有笔记，来记录第一条吧</text>
+    <view class="empty-btn" bindtap="onAdd">新建笔记</view>
+  </view>
+
+  <view class="notes" wx:else>
+    <view class="note-card" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onItemTap">
+      <view class="note-title">
+        <text class="pin" wx:if="{{item.pinned}}">置顶</text>
+        <text class="note-title-text">{{item.title}}</text>
+        <text class="mine-tag" wx:if="{{item.isMine}}">我的</text>
+      </view>
+      <view class="note-meta">
+        <text>{{item.categoryName || '未分类'}}</text>
+        <text wx:if="{{item.authorName}}"> · {{item.authorName}}</text>
+        <text> · {{item.timeText}}</text>
+      </view>
+      <view class="note-preview" wx:if="{{item.contentPreview}}">{{item.contentPreview}}</view>
+    </view>
+  </view>
+</view>

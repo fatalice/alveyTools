@@ -1,0 +1,21 @@
+<view class="page">
+  <view class="loading" wx:if="{{loading}}"><text>加载中...</text></view>
+
+  <block wx:elif="{{note}}">
+    <view class="title">{{note.title}}</view>
+    <view class="meta">
+      <text class="pin" wx:if="{{note.pinned}}">置顶</text>
+      <text>{{categoryName || '未分类'}}</text>
+      <text wx:if="{{note.authorName}}"> · {{note.authorName}}</text>
+      <text> · {{note.timeText}}</text>
+    </view>
+    <view class="content">{{note.content}}</view>
+
+    <view class="actions" wx:if="{{isMine}}">
+      <button class="btn" bindtap="onEdit">编辑</button>
+      <button class="btn btn-danger" bindtap="onDelete">删除</button>
+    </view>
+  </block>
+
+  <view class="loading" wx:else><text>笔记不存在或已删除</text></view>
+</view>
