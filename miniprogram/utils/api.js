@@ -152,12 +152,24 @@ function echo() {
 
 // ---- 题库 ----
 
-function getExamMeta() {
-  return request({ path: '/api/exam/meta', method: 'POST' })
+function getExamMeta(data = {}) {
+  return request({ path: '/api/exam/meta', method: 'POST', data })
 }
 
 function getExamQuestions(data) {
   return request({ path: '/api/exam/questions', method: 'POST', data })
+}
+
+function getQbTree() {
+  return request({ path: '/api/qb', method: 'POST', data: { action: 'getTree' } })
+}
+
+function listQbCourses(data = {}) {
+  return request({ path: '/api/qb', method: 'POST', data: { action: 'listCourses', ...data } })
+}
+
+function listQbBanks(data = {}) {
+  return request({ path: '/api/qb', method: 'POST', data: { action: 'listBanks', ...data } })
 }
 
 // ---- 留言板 ----
@@ -241,7 +253,7 @@ module.exports = {
   uploadFile, release,
   getHomeCards, getHomeSwipers,
   echo,
-  getExamMeta, getExamQuestions,
+  getExamMeta, getExamQuestions, getQbTree, listQbCourses, listQbBanks,
   getMessages, postMessage,
   getScoreInfo, scoreCheckin,
   getBraceDiaryList, getBraceDiaryDetail,

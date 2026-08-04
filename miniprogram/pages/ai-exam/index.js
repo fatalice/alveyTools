@@ -5,6 +5,10 @@ Page({
   data: {
     view: 'home',
     loading: true,
+    bankId: '',
+    bankTitle: '理论考试',
+    courseName: '',
+    totalCount: 0,
     typeFilters: [],
     selectedType: 'all',
     randomMode: false,
@@ -24,7 +28,21 @@ Page({
     finishRate: 0,
   },
 
-  async onLoad() {
+  async onLoad(options) {
+    const bankId = (options && options.bankId) || ''
+    const bankTitle = options && options.title ? decodeURIComponent(options.title) : '理论考试'
+    const courseName = options && options.course ? decodeURIComponent(options.course) : ''
+
+    if (!bankId) {
+      wx.showToast({ title: '请先选择题库', icon: 'none' })
+      setTimeout(() => {
+        wx.redirectTo({ url: '/pages/exam-list/index' })
+      }, 500)
+      return
+    }
+
+    this.setData({ bankId, bankTitle, courseName })
+    wx.setNavigationBarTitle({ title: bankTitle })
     this.refreshProgress()
     await this.loadData()
   },
@@ -34,13 +52,18 @@ Page({
   },
 
   async loadData() {
+    const { bankId } = this.data
+    if (!bankId) return
     this.setData({ loading: true })
     try {
-      await exam.loadQuestions()
+      await exam.loadQuestions(bankId)
+      const filters = exam.getTypeFilters()
       this.setData({
         loading: false,
-        typeFilters: exam.getTypeFilters(),
+        typeFilters: filters,
+        totalCount: (filters[0] && filters[0].count) || 0,
       })
+      this.refreshProgress()
     } catch (err) {
       console.error('加载题库失败:', err)
       this.setData({ loading: false })
@@ -49,7 +72,7 @@ Page({
   },
 
   refreshProgress() {
-    this.setData({ progress: exam.getProgress() })
+    this.setData({ progress: exam.getProgress(this.data.bankId) })
   },
 
   onTypeTap(e) {
@@ -80,6 +103,11 @@ Page({
         wx.showToast({ title: '暂无错题，先做几题吧', icon: 'none' })
         return
       }
+    }
+
+    if (!session.length) {
+      wx.showToast({ title: '该题库暂无题目', icon: 'none' })
+      return
     }
 
     this.setData({
@@ -121,7 +149,9 @@ Page({
       else set.add(key)
       const selectedKeys = Array.from(set).sort()
       const selectedMap = {}
-      selectedKeys.forEach(k => { selectedMap[k] = true })
+      selectedKeys.forEach((k) => {
+        selectedMap[k] = true
+      })
       this.setData({ selectedKeys, selectedMap, selection: selectedKeys.join('') })
       return
     }
@@ -132,7 +162,7 @@ Page({
   },
 
   submitAnswer() {
-    const { current, selection, submitted, sessionStats } = this.data
+    const { current, selection, submitted, sessionStats, bankId } = this.data
     if (!current || submitted) return
     if (!selection) {
       wx.showToast({ title: '请先选择答案', icon: 'none' })
@@ -141,7 +171,7 @@ Page({
 
     const isCorrect = exam.checkAnswer(current, selection)
     const questionId = current.id || current._id
-    exam.updateProgress(questionId, isCorrect)
+    exam.updateProgress(questionId, isCorrect, bankId)
     this.refreshProgress()
 
     this.setData({
@@ -193,7 +223,7 @@ Page({
   },
 
   async reloadData() {
-    exam.clearCache()
+    exam.clearCache(this.data.bankId)
     await this.loadData()
   },
 })

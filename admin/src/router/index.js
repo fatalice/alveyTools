@@ -4,6 +4,7 @@ import AdminLayout from '../layouts/AdminLayout.vue'
 import Notices from '../views/Notices.vue'
 import Scores from '../views/Scores.vue'
 import QuestionBanks from '../views/QuestionBanks.vue'
+import MockExam from '../views/MockExam.vue'
 import Notes from '../views/Notes.vue'
 import Settings from '../views/Settings.vue'
 
@@ -17,6 +18,7 @@ const router = createRouter({
       redirect: '/qb',
       children: [
         { path: 'qb', name: 'qb', component: QuestionBanks, meta: { title: '题库管理' } },
+        { path: 'mock-exam', name: 'mock-exam', component: MockExam, meta: { title: '模拟考试' } },
         { path: 'notes', name: 'notes', component: Notes, meta: { title: '学习笔记' } },
         { path: 'notices', name: 'notices', component: Notices, meta: { title: '社区公告' } },
         { path: 'scores', name: 'scores', component: Scores, meta: { title: '用户积分' } },

@@ -64,3 +64,7 @@ export function qb(action, data = {}) {
 export function notes(action, data = {}) {
   return http.post('/admin/notes', { action, ...data })
 }
+
+export function examMeta(data = {}) {
+  return http.post('/api/exam/meta', data)
+}

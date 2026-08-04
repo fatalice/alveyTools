@@ -1,4 +1,5 @@
 {
-  "navigationBarTitleText": "在线考试",
+  "navigationBarTitleText": "理论考试",
+  "enablePullDownRefresh": true,
   "usingComponents": {}
 }

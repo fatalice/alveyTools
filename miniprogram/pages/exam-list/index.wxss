@@ -4,24 +4,33 @@ page {
 }
 
 .page {
-  padding: 24rpx 32rpx;
+  padding: 24rpx 32rpx 48rpx;
   min-height: 100vh;
 }
 
-.filter-bar {
-  display: flex;
-  align-items: center;
-  gap: 12rpx;
-  padding: 20rpx 0 32rpx;
+.loading,
+.error {
+  padding: 80rpx 24rpx;
+  text-align: center;
+  color: #888;
+  font-size: 28rpx;
 }
 
-.filter-icon {
-  font-size: 32rpx;
+.retry-btn {
+  margin-top: 24rpx;
 }
 
-.filter-text {
+.section-title {
   font-size: 28rpx;
   color: #666;
+  margin: 8rpx 0 24rpx;
+}
+
+.back-row {
+  font-size: 28rpx;
+  color: #1890ff;
+  margin-bottom: 8rpx;
+  padding: 8rpx 0;
 }
 
 .exam-card {
@@ -33,7 +42,11 @@ page {
 }
 
 .exam-card:active {
-  transform: scale(0.98);
+  opacity: 0.92;
+}
+
+.practice-card {
+  margin-top: 16rpx;
 }
 
 .card-header {
@@ -53,11 +66,14 @@ page {
 }
 
 .card-icon {
-  font-size: 40rpx;
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
 }
 
 .card-info {
   flex: 1;
+  min-width: 0;
 }
 
 .card-title {
@@ -70,27 +86,15 @@ page {
 .card-subtitle {
   font-size: 24rpx;
   color: #999;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.card-status {
-  font-size: 24rpx;
-  color: #1890ff;
-  background: #e6f7ff;
-  padding: 6rpx 16rpx;
-  border-radius: 8rpx;
-}
-
-.card-footer {
-  margin-top: 24rpx;
-  padding-top: 20rpx;
-  border-top: 1rpx solid #f0f0f0;
-  display: flex;
-  gap: 32rpx;
-}
-
-.card-meta {
-  font-size: 26rpx;
-  color: #888;
+.chevron {
+  font-size: 40rpx;
+  color: #ccc;
+  line-height: 1;
 }
 
 .empty-tip {

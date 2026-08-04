@@ -67,6 +67,7 @@ const router = useRouter()
 
 const contentMenus = [
   { path: '/qb', label: '题库管理', icon: '▣' },
+  { path: '/mock-exam', label: '模拟考试', icon: '◎' },
   { path: '/notes', label: '学习笔记', icon: '✎' },
 ]
 const opsMenus = [
@@ -76,6 +77,7 @@ const opsMenus = [
 
 const descMap = {
   '/qb': '分类 → 课程 → 题库 → 题目，四级结构管理',
+  '/mock-exam': '选择题库组卷，限时作答，交卷后查看成绩与解析',
   '/notes': '自定义笔记分类（如考研英语 / 考研政治），录入与展示学习笔记',
   '/notices': '管理开心羊圈社区公告',
   '/scores': '查看用户积分并手动加分',

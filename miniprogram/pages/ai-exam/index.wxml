@@ -3,8 +3,9 @@
   <!-- 首页：选择练习模式 -->
   <block wx:if="{{view === 'home'}}">
     <view class="hero">
-      <view class="hero-title">人工智能训练师</view>
-      <view class="hero-sub" wx:if="{{!loading}}">三级理论复习 · 共 {{typeFilters[0].count || 0}} 题</view>
+      <view class="hero-title">{{bankTitle}}</view>
+      <view class="hero-sub" wx:if="{{courseName && !loading}}">{{courseName}}</view>
+      <view class="hero-sub" wx:if="{{!loading}}">共 {{totalCount}} 题</view>
       <view class="hero-sub" wx:if="{{loading}}">题库加载中...</view>
       <view class="hero-refresh" bindtap="reloadData" wx:if="{{!loading}}">↻ 刷新题库</view>
     </view>
