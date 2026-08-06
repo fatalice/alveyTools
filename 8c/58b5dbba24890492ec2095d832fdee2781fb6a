@@ -1,0 +1,29 @@
+admin/src/api.js
+  s_8e70f114f5a918::t_d6d9e7f735c928 68-71
+admin/src/router/index.js
+  s_8e70f114f5a918::t_8176e71ba861a9 9,25
+admin/src/views/Prizes.vue
+  s_8e70f114f5a918::t_1d45e908384399 1-20,22-23,25-68,70-193
+  s_8e70f114f5a918::t_417eb7c325359d 21,24
+  s_8e70f114f5a918::t_3da66328b24106 69
+admin/src/layouts/AdminLayout.vue
+  s_8e70f114f5a918::t_271c7eba05c771 75,84
+miniprogram/pages/sheep-circle/exchange/index.js
+  s_8e70f114f5a918::t_717f3e443591f7 6-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.39-trip",
+  "base_commit_sha": "8c58b5dbba24890492ec2095d832fdee2781fb6a",
+  "prompts": {},
+  "sessions": {
+    "s_8e70f114f5a918": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "b9f2e588-5c5e-4d62-8d8b-e09ee5c11ea1",
+        "model": "default"
+      },
+      "human_author": "jiaqi Wu <jiaqi.wu@trip.com>"
+    }
+  }
+}
