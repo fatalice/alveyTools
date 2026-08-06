@@ -3,7 +3,12 @@ const api = require('../../../utils/api')
 const DEFAULT_PRIZES = [
   { id: 'ticket', name: '1000公里机票', emoji: '✈️', cost: 100 },
   { id: 'camera', name: '富士XT50套机', emoji: '📷', cost: 300 },
-  { id: 'cash', name: '1000元现金', emoji: '💰', cost: 200 },
+  { id: 'cash', name: '3000元现金', emoji: '💰', cost: 200 },
+  { id: 'milk-tea', name: '任意奶茶', emoji: '🧋', cost: 2 },
+  { id: 'comfort-coupon', name: '吵架哄哄券', emoji: '🥰', cost: 2 },
+  { id: 'bath-overnight', name: '洗浴过夜券', emoji: '🛁', cost: 25 },
+  { id: 'dji-basic', name: '大疆基础无人机', emoji: '🚁', cost: 120 },
+  { id: 'dji-pro', name: '大疆高端无人机', emoji: '🛩️', cost: 200 },
 ]
 
 function formatTime(ts) {

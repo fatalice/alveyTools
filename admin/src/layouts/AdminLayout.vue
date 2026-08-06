@@ -72,6 +72,7 @@ const contentMenus = [
 ]
 const opsMenus = [
   { path: '/notices', label: '社区公告', icon: '☰' },
+  { path: '/prizes', label: '积分奖品', icon: '🎁' },
   { path: '/scores', label: '用户积分', icon: '◆' },
 ]
 
@@ -80,6 +81,7 @@ const descMap = {
   '/mock-exam': '选择题库组卷，限时作答，交卷后查看成绩与解析',
   '/notes': '自定义笔记分类（如考研英语 / 考研政治），录入与展示学习笔记',
   '/notices': '管理开心羊圈社区公告',
+  '/prizes': '配置开心羊圈积分兑换奖品（名称、积分、上下架）',
   '/scores': '查看用户积分并手动加分',
   '/settings': '修改管理员登录密码',
 }
