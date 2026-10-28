@@ -1,3 +1,4 @@
+const api = require('../../utils/api')
 const TOKEN_KEY = 'alvey_logged_in'
 
 function isLoggedIn() {
@@ -15,6 +16,15 @@ Page({
       { name: '社区公告', emoji: '📢', desc: '最新消息', type: 'notice', color: 'purple' },
       { name: '虚拟点菜', emoji: '🍜', desc: '今天吃什么', type: 'menu', color: 'green' },
     ],
+  },
+
+  // 进入页面即校验白名单，防止绕过首页直接跳转
+  async onLoad() {
+    const allowed = await api.isSheepAllowed()
+    if (!allowed) {
+      wx.showToast({ title: '私人领地，暂不开门', icon: 'none' })
+      setTimeout(() => wx.navigateBack(), 1000)
+    }
   },
 
   onFeatureTap(e) {
@@ -66,7 +76,6 @@ Page({
 
   async doCheckin() {
     try {
-      const api = require('../../utils/api')
       const res = await api.scoreCheckin()
       const data = res.data || res
       if (data.alreadyChecked) {

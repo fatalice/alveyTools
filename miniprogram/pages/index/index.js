@@ -1,4 +1,6 @@
 // index.js
+const api = require('../../utils/api')
+
 Page({
   data: {
     gridItems: [
@@ -9,7 +11,7 @@ Page({
     ],
   },
 
-  onGridTap(e) {
+  async onGridTap(e) {
     const index = e.currentTarget.dataset.index
     if (index === 0) {
       wx.navigateTo({ url: '/pages/toolbox/index' })
@@ -18,6 +20,11 @@ Page({
     } else if (index === 2) {
       wx.navigateTo({ url: '/pages/notes/index' })
     } else if (index === 3) {
+      const allowed = await api.isSheepAllowed()
+      if (!allowed) {
+        wx.showToast({ title: '私人领地，暂不开门', icon: 'none' })
+        return
+      }
       wx.navigateTo({ url: '/pages/sheep-circle/index' })
     } else {
       wx.showToast({ title: '功能开发中', icon: 'none' })

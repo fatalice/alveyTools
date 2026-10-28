@@ -4,6 +4,12 @@
 const BASE_URL = 'https://wujiaqi12.site'
 const OPENID_KEY = 'alvey_openid'
 
+// 开心羊圈白名单 openid（仅这些用户可进入）
+const SHEEP_WHITELIST = [
+  'o_4Tq0E2knNgPukQecNNagXq-s1Q',
+  'o_4Tq0EOEkQ3CMLNF-yTx2JaMwtQ',
+]
+
 let _openid = ''
 
 function getOpenid() {
@@ -36,6 +42,13 @@ function getOpenid() {
       fail() { resolve('') },
     })
   })
+}
+
+// 开心羊圈访问校验：当前 openid 在白名单内才放行
+// 拿不到 openid（未登录 / 网络异常）一律拒绝（fail-closed）
+async function isSheepAllowed() {
+  const openid = await getOpenid()
+  return !!openid && SHEEP_WHITELIST.includes(openid)
 }
 
 function request({ path, method = 'GET', data = null }) {
@@ -243,6 +256,7 @@ function noteDelete(id) {
 module.exports = {
   BASE_URL,
   getOpenid,
+  isSheepAllowed,
   request,
   getWxContext,
   genPersonalInfo,
