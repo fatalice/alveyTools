@@ -1,11 +1,11 @@
 # 云托管实战示例
 
-本项目是微信小程序纯前端项目，通过 `callContainer` 调用腾讯云开发 CloudRun 容器后端服务。
+本项目是微信小程序纯前端项目，通过 `wx.request` 直连腾讯云开发 CloudRun 容器后端服务（`https://wujiaqi12.site`）。
 
 ## 项目特点
 
 - **纯前端**：无云函数目录，所有后端调用走 `callContainer` REST 接口
-- **集中 API 管理**：`miniprogram/utils/api.js` 统一封装所有 `callContainer` 调用
+- **集中 API 管理**：`miniprogram/utils/api.js` 统一封装所有 `wx.request` 调用
 - **展示真实后端能力**：麻将计分、用户画像、内容发布、文件上传
 
 ## 后端服务
