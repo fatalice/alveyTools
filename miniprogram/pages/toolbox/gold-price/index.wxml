@@ -1,0 +1,44 @@
+<t-navbar title="金价查询" fixed placeholder>
+  <view slot="left" class="back-btn" bindtap="onBack">
+    <t-icon name="chevron-left" size="44rpx" color="#333" />
+  </view>
+</t-navbar>
+
+<view class="page">
+  <!-- 价格卡片 -->
+  <view class="price-card" wx:if="{{quote}}">
+    <view class="price-card__head">
+      <view class="price-name">{{quote.name}}</view>
+      <view class="price-unit">{{quote.unit}}</view>
+    </view>
+    <view class="price-row">
+      <text class="price {{up ? 'up' : 'down'}}">{{quote.price}}</text>
+      <view class="chg {{up ? 'up' : 'down'}}">
+        <text>{{changeStr}}</text>
+        <text class="chg-pct">{{changePctStr}}</text>
+      </view>
+    </view>
+    <view class="price-meta">
+      <view class="meta-item"><text class="meta-k">今开</text><text>{{quote.open}}</text></view>
+      <view class="meta-item"><text class="meta-k">最高</text><text>{{quote.high}}</text></view>
+      <view class="meta-item"><text class="meta-k">最低</text><text>{{quote.low}}</text></view>
+      <view class="meta-item"><text class="meta-k">昨收</text><text>{{quote.prevClose}}</text></view>
+    </view>
+    <view class="price-time">更新于 {{updateTime}}</view>
+  </view>
+
+  <!-- 走势图 -->
+  <view class="chart-card">
+    <view class="chart-head">
+      <text class="chart-title">近一年走势</text>
+      <view class="refresh-btn {{loading ? 'refreshing' : ''}}" bindtap="onRefreshTap">
+        <text class="refresh-icon">↻</text>
+        <text>更新</text>
+      </view>
+    </view>
+    <canvas type="2d" id="goldChart" class="chart-canvas"></canvas>
+    <view class="chart-empty" wx:if="{{!history.length && !loading}}">暂无走势数据</view>
+  </view>
+
+  <view class="tip">数据来源：东方财富 · 上海黄金交易所 AU9999，仅供参考</view>
+</view>

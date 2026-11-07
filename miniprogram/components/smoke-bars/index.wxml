@@ -1,0 +1,2 @@
+<!--components/smoke-bars/index.wxml-->
+<canvas type="2d" id="barCanvas" class="bar-canvas"></canvas>

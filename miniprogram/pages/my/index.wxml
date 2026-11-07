@@ -87,31 +87,9 @@
   </view>
 </view>
 
-<!-- 登录弹窗 -->
-<t-popup visible="{{loginVisible}}" placement="bottom" bind:visible-change="onLoginPopupChange">
-  <view class="login-popup">
-    <view class="login-popup__title">设置头像和昵称</view>
-    <view class="login-popup__avatar-row">
-      <button class="login-popup__avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-        <t-avatar wx:if="{{pendingAvatar}}" image="{{pendingAvatar}}" size="160rpx" shape="circle" />
-        <t-avatar wx:else icon="user" size="160rpx" shape="circle" />
-        <view class="login-popup__avatar-tip">点击选择头像</view>
-      </button>
-    </view>
-    <view class="login-popup__nick-row">
-      <view class="login-popup__nick-label">昵称</view>
-      <input
-        class="login-popup__nick-input"
-        type="nickname"
-        placeholder="请输入昵称"
-        value="{{pendingNickname}}"
-        bindinput="onNicknameInput"
-        bindblur="onNicknameInput"
-      />
-    </view>
-    <view class="login-popup__actions">
-      <t-button theme="default" size="large" block bindtap="onLoginClose">取消</t-button>
-      <t-button theme="primary" size="large" block bindtap="onConfirmLogin" loading="{{submitting}}">确定</t-button>
-    </view>
-  </view>
-</t-popup>
+<!-- 登录弹窗（共享组件：我的页 / 体重管理页共用） -->
+<login-sheet
+  visible="{{loginVisible}}"
+  bind:close="onLoginClose"
+  bind:success="onLoginSuccess"
+/>

@@ -1,0 +1,2 @@
+<!--components/fitness-chart/index.wxml-->
+<canvas type="2d" id="fc" class="fc-canvas" style="height: {{height}}px;"></canvas>

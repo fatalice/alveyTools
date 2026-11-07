@@ -1,0 +1,354 @@
+<t-navbar title="体重管理" fixed placeholder>
+  <view slot="left" class="back-btn" bindtap="onBack">
+    <t-icon name="chevron-left" size="44rpx" color="#333" />
+  </view>
+</t-navbar>
+
+<view class="screen">
+  <view class="views">
+
+    <!-- ==================== 今日 ==================== -->
+    <view class="view" wx:if="{{tab === 'today'}}">
+      <view class="vhead">
+        <view>
+          <view class="date">{{dateCn}}</view>
+          <view class="ptitle">今天</view>
+        </view>
+        <view class="avatar" bindtap="onGoLogin">{{nickname ? nickname[0] : 'W'}}</view>
+      </view>
+
+      <!-- Hero -->
+      <view class="card hero">
+        <view class="hero-main">
+          <view class="hero-left">
+            <text class="lbl">今日体重</text>
+            <view class="bignum">
+              <text class="bignum__v">{{todayWeight}}</text>
+              <text class="bignum__u">kg</text>
+            </view>
+            <view class="delta {{deltaUp ? 'delta--up' : ''}}">{{deltaText}}</view>
+          </view>
+          <view class="ringwrap">
+            <canvas type="2d" id="goalRing" class="ring-canvas"></canvas>
+            <view class="ring-center">
+              <text class="ring-t">{{ringPct}}%</text>
+            </view>
+            <view class="ringcap">目标进度</view>
+          </view>
+        </view>
+
+        <view class="spark" wx:if="{{hasSpark}}">
+          <fitness-chart data="{{weight7}}" mini="{{true}}" height="{{46}}" />
+        </view>
+        <view class="hero-empty" wx:elif="{{emptyTip}}">{{emptyTip}}</view>
+
+        <view class="hstats">
+          <view class="hstat">
+            <text class="k">目标</text>
+            <text class="v">{{hasGoal ? goalWeight + ' kg' : '未设置'}}</text>
+          </view>
+          <view class="hstat">
+            <text class="k">距目标</text>
+            <text class="v">{{hasGoal ? leftText : '--'}}</text>
+          </view>
+          <view class="hstat">
+            <text class="k">30 天</text>
+            <text class="v">{{hasWeight ? delta30Text : '--'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 本周训练 -->
+      <view class="card">
+        <view class="srow">
+          <text class="lbl">本周训练</text>
+          <text class="mono">{{weekCount}} / {{weekTarget}} 次</text>
+        </view>
+        <view class="week">
+          <view class="wday {{item.count > 0 ? 'wday--on' : ''}}" wx:for="{{week}}" wx:key="date">
+            <view class="wbar" style="height: {{item.count > 0 ? 12 + item.count * 8 : 5}}rpx;"></view>
+            <text class="wlabel">{{item.date.slice(5, 10)}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 今日训练 -->
+      <view class="shead">
+        <text class="shead__t">今日训练</text>
+        <text class="link" bindtap="onTabTap" data-tab="log">+ 添加</text>
+      </view>
+      <view class="card list">
+        <view wx:if="{{!todayLogs.length}}" class="empty">
+          <text>今天还没有训练记录</text>
+          <text>去「记录」页加一条</text>
+        </view>
+        <view class="entry" wx:for="{{todayLogs}}" wx:key="_id">
+          <view class="eico" style="background: {{item.soft}}; color: {{item.color}};">🏃</view>
+          <view class="emain">
+            <view class="etitle">{{item.name}}</view>
+            <view class="esub">{{item.sub}}</view>
+          </view>
+          <view class="eval">
+            <text class="eval__b">{{item.kcalText}}</text>
+            <text class="eval__u">kcal</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- ETA 提示 -->
+      <view class="card tip">
+        <view class="tipico">✦</view>
+        <view class="tipmain">
+          <view class="tiptitle">{{etaLine}}</view>
+          <view class="tipsub" wx:if="{{etaSub}}">{{etaSub}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ==================== 记录 ==================== -->
+    <view class="view" wx:if="{{tab === 'log'}}">
+      <view class="vhead">
+        <view>
+          <view class="date">新增一条</view>
+          <view class="ptitle">记录</view>
+        </view>
+      </view>
+
+      <!-- 体重 -->
+      <view class="card">
+        <view class="srow">
+          <text class="lbl">体重</text>
+          <text class="mono muted">{{recDateCn}}</text>
+        </view>
+        <view class="winput">
+          <input
+            class="winput__i"
+            type="digit"
+            placeholder="--"
+            placeholder-class="winput__ph"
+            value="{{recWeight}}"
+            bindinput="onWeightInput"
+          />
+          <text class="winput__u">kg</text>
+        </view>
+        <view class="hint">每天只保留一条，再记就是覆盖，趋势图不会长毛刺</view>
+        <view class="btn btn--sm" bindtap="onSaveWeight">{{saving ? '保存中...' : '保存体重'}}</view>
+      </view>
+
+      <!-- 训练项目 -->
+      <view class="card">
+        <text class="lbl">训练项目</text>
+        <view class="chips">
+          <view
+            class="chip {{curType === item.key ? 'chip--on' : ''}}"
+            wx:for="{{types}}"
+            wx:key="key"
+            data-type="{{item.key}}"
+            bindtap="onTypeTap"
+            style="{{curType === item.key ? 'background:' + item.color + ';border-color:' + item.color + ';color:#fff' : ''}}"
+          >{{item.label}}</view>
+        </view>
+
+        <view class="frow">
+          <view class="fcell" wx:for="{{fields}}" wx:key="key" wx:for-item="f">
+            <text class="flabel">{{f.label}}</text>
+            <block wx:if="{{f.text}}">
+              <input
+                class="tinput"
+                placeholder="{{f.key === 'name' ? '如 划船机' : '如 5000 米'}}"
+                value="{{fieldValues[f.key]}}"
+                data-field="{{f.key}}"
+                bindinput="onFieldInput"
+              />
+            </block>
+            <block wx:else>
+              <view class="stepper">
+                <view class="step-btn" data-field="{{f.key}}" data-dir="-1" bindtap="onFieldStep">−</view>
+                <text class="stepper__v">{{fieldValues[f.key]}}</text>
+                <view class="step-btn" data-field="{{f.key}}" data-dir="1" bindtap="onFieldStep">+</view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </view>
+
+      <!-- 预计消耗 -->
+      <view class="est">
+        <view>
+          <text class="lbl">预计消耗</text>
+          <view class="estv">
+            <text class="estv__b">{{kcal || '—'}}</text>
+            <text class="estv__u">kcal</text>
+          </view>
+        </view>
+        <view class="estnote">{{kcalBasis}}</view>
+      </view>
+
+      <view class="btn" bindtap="onSaveLog">{{saving ? '保存中...' : '保存记录'}}</view>
+      <view class="past" wx:if="{{lastLogText}}">上次 · <text class="past__b">{{lastLogText}}</text></view>
+    </view>
+
+    <!-- ==================== 趋势 ==================== -->
+    <view class="view" wx:if="{{tab === 'trend'}}">
+      <view class="vhead">
+        <view>
+          <view class="date">体重变化</view>
+          <view class="ptitle">趋势</view>
+        </view>
+      </view>
+
+      <view class="seg">
+        <view
+          class="seg__i {{range === 7 ? 'seg__i--on' : ''}}"
+          wx:for="{{[{d:7,t:'7 天'},{d:30,t:'30 天'},{d:90,t:'90 天'}]}}"
+          wx:key="d"
+          data-days="{{item.d}}"
+          bindtap="onRangeTap"
+        >{{item.t}}</view>
+      </view>
+
+      <view class="card">
+        <view class="crow">
+          <view class="bignum">
+            <text class="bignum__v bignum__v--sm">{{trendWeight}}</text>
+            <text class="bignum__u">kg</text>
+          </view>
+          <text class="cdelta">{{trendDelta}}</text>
+        </view>
+        <view class="spark" wx:if="{{hasSpark}}">
+          <fitness-chart data="{{trendSeries}}" goal="{{goalWeight}}" height="{{152}}" />
+        </view>
+        <view class="empty" wx:else>记录两次以上体重，这里就会长出趋势线</view>
+        <view class="cfoot" wx:if="{{hasSpark}}">
+          <text>最低 {{trendMin}}</text>
+          <text>最高 {{trendMax}}</text>
+          <text>目标 {{hasGoal ? goalWeight : '--'}}</text>
+        </view>
+      </view>
+
+      <view class="sgrid">
+        <view class="scell" wx:for="{{statCells}}" wx:key="k">
+          <text class="k">{{item.k}}</text>
+          <view class="v">{{item.v}}<text class="v__u">{{item.u}}</text></view>
+        </view>
+      </view>
+
+      <!-- 训练分布 -->
+      <view class="card" wx:if="{{dist.length}}">
+        <text class="lbl">训练分布 · 近 {{range}} 天</text>
+        <view class="dist">
+          <view class="dr" wx:for="{{dist}}" wx:key="name">
+            <text class="dn">{{item.name}}</text>
+            <view class="dt">
+              <view class="dt__i" style="width: {{item.pct}}%; background: {{item.color}};"></view>
+            </view>
+            <text class="dv">{{item.count}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ==================== 目标 ==================== -->
+    <view class="view" wx:if="{{tab === 'goal'}}">
+      <view class="vhead">
+        <view>
+          <view class="date">我的计划</view>
+          <view class="ptitle">目标</view>
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="gtrack">
+          <view class="gcell">
+            <text class="gk">起始</text>
+            <view class="gv">{{startWeight}}<text class="gv__u"> kg</text></view>
+          </view>
+          <view class="gbar">
+            <view class="gbar__i" style="width: {{goalPct}}%;"></view>
+          </view>
+          <view class="gcell">
+            <text class="gk">现在</text>
+            <view class="gv">{{todayWeight}}<text class="gv__u"> kg</text></view>
+          </view>
+        </view>
+        <view class="gnote">{{goalNote}}</view>
+
+        <view class="frow">
+          <view class="fcell">
+            <text class="flabel">起始体重</text>
+            <view class="stepper">
+              <view class="step-btn" data-field="start" data-dir="-1" bindtap="onGoalStep">−</view>
+              <text class="stepper__v">{{startInput}}</text>
+              <view class="step-btn" data-field="start" data-dir="1" bindtap="onGoalStep">+</view>
+            </view>
+          </view>
+          <view class="fcell">
+            <text class="flabel">目标体重</text>
+            <view class="stepper">
+              <view class="step-btn" data-field="goal" data-dir="-1" bindtap="onGoalStep">−</view>
+              <text class="stepper__v">{{goalInput}}</text>
+              <view class="step-btn" data-field="goal" data-dir="1" bindtap="onGoalStep">+</view>
+            </view>
+          </view>
+        </view>
+        <view class="frow">
+          <view class="fcell">
+            <text class="flabel">每周减重</text>
+            <view class="stepper">
+              <view class="step-btn" data-field="rate" data-dir="-1" bindtap="onGoalStep">−</view>
+              <text class="stepper__v">{{rateInput}}</text>
+              <view class="step-btn" data-field="rate" data-dir="1" bindtap="onGoalStep">+</view>
+            </view>
+          </view>
+          <view class="fcell">
+            <text class="flabel">每周训练次数</text>
+            <view class="stepper">
+              <view class="step-btn" data-field="weekTarget" data-dir="-1" bindtap="onGoalStep">−</view>
+              <text class="stepper__v">{{weekTargetInput}}</text>
+              <view class="step-btn" data-field="weekTarget" data-dir="1" bindtap="onGoalStep">+</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="eta">
+        <view class="etaico">◎</view>
+        <view>
+          <view class="etav">{{etaGoal}}</view>
+          <view class="etas">{{etaSubGoal}}</view>
+        </view>
+      </view>
+
+      <view class="btn" bindtap="onSaveGoal">保存目标</view>
+    </view>
+
+    <view class="viewpad"></view>
+  </view>
+
+  <!-- 底部 Tab -->
+  <view class="tabbar">
+    <view class="tabbar__i {{tab === 'today' ? 'tabbar__i--on' : ''}}" data-tab="today" bindtap="onTabTap">
+      <text class="tabbar__ic">📈</text>
+      <text class="tabbar__tx">今日</text>
+    </view>
+    <view class="tabbar__i {{tab === 'log' ? 'tabbar__i--on' : ''}}" data-tab="log" bindtap="onTabTap">
+      <text class="tabbar__ic">⊕</text>
+      <text class="tabbar__tx">记录</text>
+    </view>
+    <view class="tabbar__i {{tab === 'trend' ? 'tabbar__i--on' : ''}}" data-tab="trend" bindtap="onTabTap">
+      <text class="tabbar__ic">📉</text>
+      <text class="tabbar__tx">趋势</text>
+    </view>
+    <view class="tabbar__i {{tab === 'goal' ? 'tabbar__i--on' : ''}}" data-tab="goal" bindtap="onTabTap">
+      <text class="tabbar__ic">◎</text>
+      <text class="tabbar__tx">目标</text>
+    </view>
+  </view>
+</view>
+
+<!-- 登录弹层 -->
+<login-sheet
+  visible="{{loginVisible}}"
+  bind:close="onLoginClose"
+  bind:success="onLoginSuccess"
+/>

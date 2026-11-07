@@ -10,7 +10,6 @@
     "t-grid-item": "tdesign-miniprogram/grid-item/grid-item",
     "t-tag": "tdesign-miniprogram/tag/tag",
     "t-badge": "tdesign-miniprogram/badge/badge",
-    "t-button": "tdesign-miniprogram/button/button",
-    "t-popup": "tdesign-miniprogram/popup/popup"
+    "login-sheet": "/components/login-sheet/index"
   }
 }

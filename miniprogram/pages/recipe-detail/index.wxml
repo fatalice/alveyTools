@@ -1,0 +1,74 @@
+<view class="page" wx:if="{{recipe}}">
+  <!-- hero 大图 -->
+  <view class="hero">
+    <image class="hero-img" src="{{recipe.heroImage}}" mode="aspectFill"></image>
+    <view class="hero-scrim"></view>
+    <view class="hero-cat">{{recipe.catLabel}}</view>
+  </view>
+
+  <!-- 标题卡 -->
+  <view class="head">
+    <view class="head-title">{{recipe.title}}</view>
+    <view class="head-meta">
+      <view class="meta-item"><text class="meta-ico">⏱</text>{{recipe.time}}</view>
+      <view class="meta-item"><text class="meta-ico">🛡</text>{{recipe.diff}}</view>
+      <view class="meta-item"><text class="meta-ico">👥</text>{{recipe.servings}} 人份</view>
+    </view>
+    <view class="head-by">菜谱由 <text class="head-official">alveyTools 官方</text> 发布 · PGC</view>
+  </view>
+
+  <!-- 食材 -->
+  <view class="section">
+    <view class="sect-title">
+      <text>食材</text>
+      <view class="servings">
+        <text class="servings-label">人数</text>
+        <view class="stepper">
+          <view class="step-btn" data-step="-1" bindtap="onServingsStep">−</view>
+          <text class="step-val">{{servings}}</text>
+          <view class="step-btn" data-step="1" bindtap="onServingsStep">+</view>
+        </view>
+      </view>
+    </view>
+    <view class="ingredients">
+      <view class="ing" wx:for="{{recipe.ingredients}}" wx:key="name">
+        <text class="ing-name">{{item.name}}</text>
+        <text class="ing-qty">{{item.displayQty}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 做法 -->
+  <view class="section">
+    <view class="sect-title"><text>做法</text></view>
+    <view class="steps">
+      <view class="step" wx:for="{{recipe.steps}}" wx:key="index">
+        <view class="step-num">{{index + 1}}</view>
+        <view class="step-body">{{item}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 小贴士 -->
+  <view class="tips" wx:if="{{recipe.tips}}">
+    <view class="tips-t">💡 主厨提示</view>
+    <view class="tips-body">{{recipe.tips}}</view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="actionbar">
+    <view class="btn btn-save {{liked ? 'liked' : ''}}" bindtap="onSaveTap">
+      <text class="btn-ico">{{liked ? '♥' : '♡'}}</text>
+      <text>{{liked ? '已收藏' : '收藏'}}</text>
+    </view>
+    <view class="btn btn-cook" bindtap="onCookTap">开始烹饪</view>
+  </view>
+</view>
+
+<!-- 加载/错误态 -->
+<view class="loading" wx:if="{{!recipe && !error}}">
+  <text>加载中…</text>
+</view>
+<view class="loading" wx:if="{{error}}">
+  <text>菜谱加载失败</text>
+</view>

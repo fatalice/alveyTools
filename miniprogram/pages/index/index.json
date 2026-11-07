@@ -1,4 +1,7 @@
 {
-  "navigationBarTitleText": "首页",
-  "usingComponents": {}
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "line-icon": "/components/line-icon/index",
+    "fitness-chart": "/components/fitness-chart/index"
+  }
 }

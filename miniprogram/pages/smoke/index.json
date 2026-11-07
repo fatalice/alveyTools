@@ -1,0 +1,10 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "t-navbar": "tdesign-miniprogram/navbar/navbar",
+    "t-icon": "tdesign-miniprogram/icon/icon",
+    "smoke-ring": "/components/smoke-ring/index",
+    "smoke-bars": "/components/smoke-bars/index",
+    "bottom-sheet": "/components/bottom-sheet/index"
+  }
+}

@@ -19,7 +19,7 @@
         theme="primary"
         disabled="{{totalScore < item.cost}}"
         data-item="{{item}}"
-        bindtap="onExchange"
+        bind:tap="onExchange"
       >兑换</t-button>
     </view>
   </view>

@@ -1,0 +1,9 @@
+<!--components/bottom-sheet/index.wxml-->
+<!-- 用 wx:if 控制渲染：不可见时节点不存在，杜绝样式失效导致的漏出 -->
+<view wx:if="{{show}}" class="sheet-mask sheet-mask--open" bindtap="onMask" catchtouchmove="stop"></view>
+<view wx:if="{{show}}" class="sheet sheet--open" catchtouchmove="stop">
+  <view class="grab"></view>
+  <view wx:if="{{title}}" class="sheet-title">{{title}}</view>
+  <view wx:if="{{sub}}" class="sheet-sub">{{sub}}</view>
+  <slot></slot>
+</view>

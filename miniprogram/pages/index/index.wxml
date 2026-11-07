@@ -1,24 +1,98 @@
-<!--index.wxml-->
-<view class="page">
-  <view class="hero">
-    <view class="hero-title">alveyTools</view>
-    <view class="hero-desc">工具与学习平台</view>
+<!-- 自定义导航栏：左侧问候+日期，右侧头像 -->
+<view class="nav" style="padding-top: {{statusBarHeight}}px; padding-right: {{menuRight}}px;">
+  <view class="nav-inner">
+    <view class="nav-hi">{{greeting}}</view>
+    <view class="nav-date">{{dateStr}}</view>
   </view>
+  <view class="nav-av" bindtap="onAvatarTap">{{initial}}</view>
+</view>
+<!-- 占位，避免内容被悬浮导航遮挡 -->
+<view style="height: {{navBarHeight}}px;"></view>
 
-  <view class="grid">
-    <view
-      class="card card--{{index}}"
-      wx:for="{{gridItems}}"
-      wx:key="name"
-      data-index="{{index}}"
-      bindtap="onGridTap"
-    >
-      <view class="card__emoji">{{item.icon}}</view>
-      <view class="card__body">
-        <view class="card__name">{{item.name}}</view>
-        <view class="card__desc">{{item.desc}}</view>
+<view class="content">
+  <!-- ============ Hero：体重管理整卡打头 ============ -->
+  <view class="hero" bindtap="onHeroTap">
+    <view class="hero-top">
+      <view class="hero-k">
+        <line-icon name="weightWhite" size="{{15}}" />
+        <text>体重管理</text>
       </view>
-      <view class="card__arrow">›</view>
+      <view class="hero-btn" catchtap="onWeighTap">记录体重</view>
+    </view>
+
+    <view class="hero-num">
+      <text class="hero-num__v">{{weightText}}</text>
+      <text class="hero-num__u">kg</text>
+    </view>
+
+    <view class="hero-delta" wx:if="{{deltaText}}">{{deltaText}}</view>
+    <view class="hero-delta hero-delta--empty" wx:else>还没有记录，今天称一次</view>
+
+    <view class="hero-spark" wx:if="{{hasWeight}}">
+      <fitness-chart data="{{weight7}}" mini="{{true}}" light="{{true}}" height="{{58}}" />
+    </view>
+    <!-- 首次访问：没有体重记录，给一句引导 -->
+    <view class="hero-hint" wx:elif="{{!weightText || weightText === '--'}}">
+      还没有记录过体重，点右上角「记录体重」开始
+    </view>
+
+    <view class="hero-foot">
+      <text class="hero-foot__f">目标 <text class="hero-foot__b">{{goalText}}</text></text>
+      <text class="hero-foot__f">还差 <text class="hero-foot__b">{{leftText}}</text></text>
+    </view>
+
+    <view class="hprog">
+      <view class="hprog__i" style="width: {{ringPct}}%;"></view>
     </view>
   </view>
+
+  <!-- ============ 三宫格入口 ============ -->
+  <view class="grid3">
+    <view class="tile" bindtap="onToolTap" data-key="smoke">
+      <view class="eic i-smoke"><line-icon name="smoke" size="{{20}}" /></view>
+      <view class="tname">记一支</view>
+      <view class="tsub">今日 <text class="tsub__b">{{smokeCount}}</text> 支</view>
+    </view>
+
+    <view class="tile" bindtap="onToolTap" data-key="toolbox">
+      <view class="eic i-tool"><line-icon name="tool" size="{{20}}" /></view>
+      <view class="tname">工具箱</view>
+      <view class="tsub">{{toolCount}} 个工具</view>
+    </view>
+
+    <view class="tile" bindtap="onToolTap" data-key="recipe">
+      <view class="eic i-food"><line-icon name="food" size="{{20}}" /></view>
+      <view class="tname">菜谱大全</view>
+      <view class="tsub">{{recipeCount}} 道菜谱</view>
+    </view>
+
+    <!-- 开心羊圈：白名单可见，独占一行 -->
+    <view class="tile tile--wide" wx:if="{{showSheep}}" bindtap="onToolTap" data-key="sheep">
+      <view class="eic i-sheep"><line-icon name="sheep" size="{{20}}" /></view>
+      <view class="tname">开心羊圈</view>
+      <view class="tsub">私人领地</view>
+    </view>
+  </view>
+
+  <!-- ============ 今日动态 ============ -->
+  <view class="shead">
+    <text class="shead__t">今日动态</text>
+    <text class="link" bindtap="onFeedAll">全部</text>
+  </view>
+  <view class="feed">
+    <view class="empty" wx:if="{{!feed.length}}">
+      <text>今天还没有动态</text>
+      <text>记一笔体重或训练试试</text>
+    </view>
+    <view class="fitem" wx:for="{{feed}}" wx:key="key">
+      <view class="fdot" style="background: {{item.color}};"></view>
+      <view class="fmain">
+        <text class="fmain__b">{{item.title}}</text>
+        <text>{{item.text}}</text>
+      </view>
+      <text class="ftime">{{item.time}}</text>
+    </view>
+  </view>
+
+  <view class="viewpad"></view>
 </view>

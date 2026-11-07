@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>菜谱详情 · alveyTools</title>
+<style>
+  /* Layout: 居中手机框，菜谱详情：大图 hero + 食材（人数可调）+ 编号步骤 + 底部收藏 */
+  :root {
+    --ink: #1a1d21;
+    --ink-2: #3a3d41;
+    --paper: #f4f4f1;
+    --surface: #ffffff;
+    --surface-2: #efefe9;
+    --line: #e4e4dd;
+    --muted: #868a86;
+    --faint: #b4b8b3;
+    --brand: #1f8a4c;
+    --brand-deep: #156a39;
+    --brand-soft: #e7f3ec;
+    --amber: #b85a22;
+    --amber-soft: #f4e4d2;
+    --like: #d4506a;
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 1px 2px rgba(20,22,18,.04), 0 6px 18px rgba(20,22,18,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #e9eae3; --ink-2: #cfd0c8; --paper: #14150f; --surface: #1d1e17; --surface-2: #26271f;
+      --line: #32331e; --muted: #90948a; --faint: #5a5d54;
+      --brand: #4caa6a; --brand-deep: #3a8a52; --brand-soft: #1f2e22;
+      --amber: #d98a4e; --amber-soft: #2e2418;
+      --like: #e0708a;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #e9eae3; --ink-2: #cfd0c8; --paper: #14150f; --surface: #1d1e17; --surface-2: #26271f;
+    --line: #32331e; --muted: #90948a; --faint: #5a5d54;
+    --brand: #4caa6a; --brand-deep: #3a8a52; --brand-soft: #1f2e22;
+    --amber: #d98a4e; --amber-soft: #2e2418;
+    --like: #e0708a;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.4);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--paper);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+      "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    display: flex; align-items: flex-start; justify-content: center;
+    min-height: 100%;
+    padding: 40px max(24px, env(safe-area-inset-left, 0px)) 64px max(24px, env(safe-area-inset-right, 0px));
+  }
+  .stage { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .stage-meta { font-size: 12px; letter-spacing: .04em; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stage-meta b { color: var(--ink); font-weight: 600; }
+
+  .phone {
+    width: 390px; height: 844px; background: var(--paper);
+    border-radius: 44px;
+    box-shadow: 0 0 0 11px #1c1d1f, 0 0 0 12px #2a2b2d,
+                0 30px 60px rgba(0,0,0,.18), 0 8px 24px rgba(0,0,0,.12);
+    overflow: hidden; position: relative; display: flex; flex-direction: column;
+  }
+  @media (prefers-color-scheme: dark) {
+    .phone { box-shadow: 0 0 0 11px #0a0a0a, 0 0 0 12px #1c1c1c, 0 30px 60px rgba(0,0,0,.5); }
+  }
+  .notch {
+    position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 32px; background: #1c1d1f; border-radius: 18px; z-index: 7;
+  }
+  @media (prefers-color-scheme: dark) { .notch { background: #000; } }
+
+  .statusbar {
+    height: 54px; padding: 18px 28px 0;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 15px; font-weight: 600; color: #fff;
+    font-variant-numeric: tabular-nums; flex-shrink: 0;
+    position: relative; z-index: 5;
+  }
+  .statusbar .right { display: flex; align-items: center; gap: 6px; }
+  .statusbar svg { display: block; }
+
+  /* 导航栏浮在 hero 图上 */
+  .navbar {
+    position: absolute; top: 54px; left: 0; right: 0; z-index: 6;
+    padding: 8px 110px 0 8px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .nav-back {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(0,0,0,.35); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; flex-shrink: 0; cursor: pointer;
+  }
+  .nav-back:active { background: rgba(0,0,0,.5); }
+
+  .capsule {
+    position: absolute; top: 50px; right: 12px; z-index: 7;
+    width: 87px; height: 32px; border-radius: 16px;
+    background: rgba(0,0,0,.35); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: space-around;
+    color: #fff;
+  }
+  .capsule .dots { display: flex; gap: 3px; }
+  .capsule .dots i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+  .capsule .divider { width: 1px; height: 16px; background: rgba(255,255,255,.4); }
+  .capsule .close { width: 13px; height: 13px; border-radius: 50%; border: 1.4px solid currentColor; position: relative; }
+  .capsule .close::after { content:""; position:absolute; left:50%; top:50%; width:6px; height:6px; transform:translate(-50%,-50%); border-radius:50%; background:currentColor; }
+
+  .screen { flex: 1; overflow-y: auto; scrollbar-width: none; }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* hero 大图 */
+  .hero { position: relative; height: 280px; background: #2a2018; margin-top: -54px; }
+  .hero img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .hero .scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.35) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 60%, rgba(20,16,10,.55) 100%); }
+  .hero .cat-tag {
+    position: absolute; top: 110px; left: 16px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: #f4e4d2; background: rgba(184,90,34,.92);
+    padding: 4px 10px; border-radius: 999px; font-weight: 600;
+  }
+
+  /* 标题块（叠在 hero 下沿） */
+  .head {
+    background: var(--surface);
+    margin: -28px 16px 0;
+    border-radius: var(--radius-lg);
+    padding: 18px 18px 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    position: relative; z-index: 2;
+  }
+  .head .title { font-size: 22px; font-weight: 700; color: var(--ink); line-height: 1.25; text-wrap: balance; }
+  .head .meta {
+    margin-top: 10px; display: flex; gap: 14px; flex-wrap: wrap;
+    font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .head .meta .item { display: flex; align-items: center; gap: 5px; }
+  .head .meta svg { width: 13px; height: 13px; color: var(--amber); }
+  .head .by {
+    margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line);
+    font-size: 11px; color: var(--faint);
+  }
+  .head .by b { color: var(--muted); font-weight: 600; }
+
+  /* 区块 */
+  .section { padding: 22px 16px 4px; }
+  .sect-title {
+    font-size: 15px; font-weight: 700; color: var(--ink);
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  /* 人数调节 */
+  .servings {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 12px; color: var(--muted);
+  }
+  .stepper { display: flex; align-items: center; gap: 0; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  .stepper button {
+    width: 30px; height: 30px; border: none; background: var(--surface);
+    color: var(--ink); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  }
+  .stepper button:active { background: var(--surface-2); }
+  .stepper .val { min-width: 28px; text-align: center; font-size: 13px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* 食材列表 */
+  .ingredients { display: flex; flex-direction: column; }
+  .ing {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 0; border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .ing:last-child { border-bottom: none; }
+  .ing .name { color: var(--ink-2); }
+  .ing .qty { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  /* 步骤 */
+  .steps { display: flex; flex-direction: column; gap: 18px; }
+  .step { display: flex; gap: 14px; }
+  .step .num {
+    flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+    background: var(--amber); color: #fff; font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; font-variant-numeric: tabular-nums;
+  }
+  .step .body { flex: 1; font-size: 14px; line-height: 1.65; color: var(--ink-2); padding-top: 2px; }
+
+  /* 小贴士 */
+  .tips {
+    margin: 4px 16px 24px;
+    background: var(--brand-soft); border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-size: 13px; line-height: 1.6; color: var(--ink-2);
+  }
+  .tips .t { font-weight: 700; color: var(--brand-deep); font-size: 13px; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .tips .t svg { width: 14px; height: 14px; }
+
+  /* 底部收藏栏 */
+  .actionbar {
+    flex-shrink: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    padding: 10px 16px;
+    padding-bottom: calc(10px + 24px);
+    display: flex; gap: 10px;
+  }
+  .btn {
+    flex: 1; height: 46px; border-radius: 12px; border: none;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all .15s;
+  }
+  .btn svg { width: 18px; height: 18px; }
+  .btn-save {
+    background: var(--surface-2); color: var(--ink);
+    border: 1px solid var(--line);
+  }
+  .btn-save.liked { background: var(--like); color: #fff; border-color: transparent; }
+  .btn-save.liked svg { fill: #fff; stroke: #fff; }
+  .btn-cook {
+    background: var(--amber); color: #fff;
+  }
+  .btn-cook:active, .btn-save:active { transform: scale(.97); }
+
+  .home-indicator {
+    position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+    width: 134px; height: 5px; border-radius: 3px; background: #fff; opacity: .5; z-index: 8;
+  }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  @media (max-width: 440px) {
+    body { padding: 16px; }
+    .phone { transform: scale(.9); transform-origin: top center; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <div class="stage-meta">菜谱详情 · <b>第三层</b> · 食材可按人数缩放 · 底部收藏/开始烹饪</div>
+
+  <div class="phone" role="img" aria-label="菜谱详情页 mockup">
+
+    <div class="notch"></div>
+
+    <!-- 状态栏（白字，叠在 hero 上） -->
+    <div class="statusbar">
+      <span>9:41</span>
+      <span class="right">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4.5" y="4" width="3" height="7" rx="1"/><rect x="9" y="2" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 4 C4 1 11 1 14 4"/><path d="M3.5 6.5 C5 5 10 5 11.5 6.5"/><circle cx="7.5" cy="9" r="1" fill="currentColor"/></svg>
+        <svg width="25" height="11" viewBox="0 0 25 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="1" y="1" width="20" height="9" rx="2"/><rect x="3" y="3" width="14" height="5" rx="1" fill="currentColor"/><rect x="22" y="3.5" width="2" height="4" rx="1" fill="currentColor"/></svg>
+      </span>
+    </div>
+
+    <!-- 导航：返回键浮在图上 -->
+    <div class="navbar">
+      <div class="nav-back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18 9 12l6-6"/></svg>
+      </div>
+    </div>
+    <div class="capsule" aria-label="微信胶囊占位">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="divider"></span>
+      <span class="close"></span>
+    </div>
+
+    <!-- 屏幕 -->
+    <div class="screen">
+
+      <!-- hero 大图 -->
+      <div class="hero">
+        <img src="https://picsum.photos/seed/alvey-ribeye/780/560" alt="反煎肋眼">
+        <div class="scrim"></div>
+        <div class="cat-tag">牛排</div>
+      </div>
+
+      <!-- 标题块 -->
+      <div class="head">
+        <div class="title">Reverse-Seared Ribeye<br>反煎肋眼</div>
+        <div class="meta">
+          <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>45 分</span>
+          <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 11 4.5-3 8-6 8-11V5z"/></svg>中等难度</span>
+          <span class="item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5M14 20c0-2 2-4 4-4s4 2 4 4"/></svg>2 人份</span>
+        </div>
+        <div class="by">菜谱由 <b>alveyTools 官方</b> 发布 · PGC</div>
+      </div>
+
+      <!-- 食材 -->
+      <div class="section">
+        <div class="sect-title">
+          <span>食材</span>
+          <span class="servings">
+            <span>人数</span>
+            <span class="stepper">
+              <button data-step="-1">−</button>
+              <span class="val" id="servingsVal">2</span>
+              <button data-step="1">+</button>
+            </span>
+          </span>
+        </div>
+        <div class="ingredients" id="ingredients"></div>
+      </div>
+
+      <!-- 步骤 -->
+      <div class="section">
+        <div class="sect-title"><span>做法</span></div>
+        <div class="steps">
+          <div class="step"><div class="num">1</div><div class="body">牛排提前 1 小时从冰箱取出回温，用厨房纸吸干表面水分，两面均匀撒粗盐。</div></div>
+          <div class="step"><div class="num">2</div><div class="body">烤箱预热 120°C，牛排放在架子上入炉，烤至中心温度达 50°C，约 25–30 分钟。</div></div>
+          <div class="step"><div class="num">3</div><div class="body">取出静置 5 分钟。铸铁锅大火烧至冒烟，淋少许橄榄油。</div></div>
+          <div class="step"><div class="num">4</div><div class="body">牛排每面煎 45 秒，立起煎脂肪侧 30 秒，至表面深褐。</div></div>
+          <div class="step"><div class="num">5</div><div class="body">转小火，下黄油、拍扁的蒜、迷迭香，用勺不断淋热黄油 30 秒增香。</div></div>
+          <div class="step"><div class="num">6</div><div class="body">立即切片，撒现磨黑胡椒，上桌。切勿再加热。</div></div>
+        </div>
+      </div>
+
+      <!-- 小贴士 -->
+      <div class="tips">
+        <div class="t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.4 1 1 1 1.7V18h6v-1.6c0-.7.4-1.3 1-1.7A7 7 0 0 0 12 2z"/></svg>主厨提示</div>
+        回温是关键：冷牛排直接煎会让外层过度焦化而中心仍凉。温度计比计时更可靠——中心 50°C 对应三分熟，是肋眼最讨喜的熟度。
+      </div>
+
+    </div>
+
+    <!-- 底部操作栏 -->
+    <div class="actionbar">
+      <button class="btn btn-save" id="saveBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9C1 9 3 5 7 5c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg>
+        <span id="saveText">收藏</span>
+      </button>
+      <button class="btn btn-cook">开始烹饪</button>
+    </div>
+
+    <div class="home-indicator"></div>
+
+  </div>
+
+  <div class="stage-meta">点心形收藏 · 加减人数食材自动缩放 · 数据存云数据库</div>
+
+</div>
+
+<script>
+  // 食材（以 2 人份为基准）
+  const BASE = 2;
+  const INGREDIENTS = [
+    { name: '肋眼牛排', qty: 400, unit: 'g', per: 200 },   // 每人 200g
+    { name: '粗盐', qty: 0, unit: '适量', per: 0 },
+    { name: '现磨黑胡椒', qty: 0, unit: '适量', per: 0 },
+    { name: '黄油', qty: 30, unit: 'g', per: 15 },
+    { name: '蒜', qty: 2, unit: '瓣', per: 1 },
+    { name: '迷迭香', qty: 1, unit: '枝', per: 0.5 },
+    { name: '橄榄油', qty: 1, unit: '大勺', per: 0.5 },
+  ];
+
+  let servings = BASE;
+  const servingsVal = document.getElementById('servingsVal');
+  const ingredientsEl = document.getElementById('ingredients');
+
+  function fmtQty(ing) {
+    if (ing.per === 0) return ing.unit;
+    const total = ing.per * servings;
+    // 整数显示整数，否则保留 1 位
+    const v = Number.isInteger(total) ? total : Math.round(total * 10) / 10;
+    return `${v} ${ing.unit}`;
+  }
+
+  function renderIngredients() {
+    servingsVal.textContent = servings;
+    ingredientsEl.innerHTML = INGREDIENTS.map(ing =>
+      `<div class="ing"><span class="name">${ing.name}</span><span class="qty">${fmtQty(ing)}</span></div>`
+    ).join('');
+  }
+
+  document.querySelectorAll('.stepper button').forEach(b => {
+    b.addEventListener('click', () => {
+      const step = Number(b.dataset.step);
+      servings = Math.max(1, Math.min(8, servings + step));
+      renderIngredients();
+    });
+  });
+
+  // 收藏切换
+  const saveBtn = document.getElementById('saveBtn');
+  const saveText = document.getElementById('saveText');
+  let liked = false;
+  saveBtn.addEventListener('click', () => {
+    liked = !liked;
+    saveBtn.classList.toggle('liked', liked);
+    saveText.textContent = liked ? '已收藏' : '收藏';
+  });
+
+  renderIngredients();
+</script>
+</body>
+</html>

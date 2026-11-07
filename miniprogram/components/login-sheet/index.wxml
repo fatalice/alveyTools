@@ -1,0 +1,34 @@
+<!--components/login-sheet/index.wxml-->
+<!-- 用 wx:if 控制渲染：不可见时节点根本不存在，杜绝样式失效导致的漏出 -->
+<view wx:if="{{visible}}" class="mask mask--open" bindtap="onMaskTap">
+  <view class="sheet" catchtap="onSheetTap">
+    <view class="sheet-title">设置头像和昵称</view>
+
+    <view class="avatar-row">
+      <button class="avatar-btn" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <t-avatar wx:if="{{pendingAvatar}}" image="{{pendingAvatar}}" size="160rpx" shape="circle" />
+        <t-avatar wx:else icon="user" size="160rpx" shape="circle" />
+        <view class="avatar-tip">点击选择头像</view>
+      </button>
+    </view>
+
+    <view class="nick-row">
+      <view class="nick-label">昵称</view>
+      <input
+        class="nick-input"
+        type="nickname"
+        placeholder="请输入昵称"
+        value="{{pendingNickname}}"
+        bindinput="onNicknameInput"
+        bindblur="onNicknameInput"
+      />
+    </view>
+
+    <view class="actions">
+      <view class="btn btn--ghost" bindtap="onClose">取消</view>
+      <view class="btn btn--primary {{submitting ? 'btn--busy' : ''}}" bindtap="onConfirm">
+        {{submitting ? '登录中...' : '确定'}}
+      </view>
+    </view>
+  </view>
+</view>

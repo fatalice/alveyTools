@@ -1,9 +1,14 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/recipe-list/index",
+    "pages/recipe-detail/index",
     "pages/my/index",
     "pages/toolbox/index",
     "pages/toolbox/exchange-rate/index",
+    "pages/toolbox/gold-price/index",
+    "pages/fitness/index",
+    "pages/smoke/index",
     "pages/exam-list/index",
     "pages/ai-exam/index",
     "pages/notebook-list/index",
@@ -18,18 +23,19 @@
     "pages/sheep-circle/brace-diary/index",
     "pages/sheep-circle/brace-diary/edit",
     "pages/sheep-circle/brace-diary/detail",
-    "pages/example/index"
+    "pages/example/index",
+    "pages/about-author/index"
   ],
   "window": {
-    "backgroundColor": "#F6F6F6",
+    "backgroundColor": "#F1F4F8",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#F6F6F6",
+    "navigationBarBackgroundColor": "#F6F9FC",
     "navigationBarTitleText": "alveyTools",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {
-    "color": "#999",
-    "selectedColor": "#1aad19",
+    "color": "#93A0AD",
+    "selectedColor": "#0B9A7A",
     "backgroundColor": "#fff",
     "borderStyle": "white",
     "list": [

@@ -4,6 +4,23 @@
 const BASE_URL = 'https://wujiaqi12.site'
 const OPENID_KEY = 'alvey_openid'
 
+// ---- 登录态（我的页 / 体重管理页 / 登录弹层共用）----
+const USERID_KEY = 'alvey_user_id'
+const TOKEN_KEY = 'alvey_logged_in'
+
+function ensureUserId() {
+  let uid = wx.getStorageSync(USERID_KEY)
+  if (!uid) {
+    uid = 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
+    wx.setStorageSync(USERID_KEY, uid)
+  }
+  return uid
+}
+
+function isLoggedIn() {
+  return !!wx.getStorageSync(TOKEN_KEY)
+}
+
 // 开心羊圈白名单 openid（仅这些用户可进入）
 const SHEEP_WHITELIST = [
   'o_4Tq0E2knNgPukQecNNagXq-s1Q',
@@ -163,6 +180,50 @@ function echo() {
   return request({ path: '/echo', method: 'GET' })
 }
 
+// ---- 金价 ----
+
+function getGoldPrice() {
+  return request({ path: '/api/gold-price', method: 'GET' })
+}
+
+// ---- 戒烟 ----
+
+// 后端 /api/smoke 返回 { code: 0, data: state }（code 用 0 而非 200），
+// 与其他接口的 { code: 200, data } 不同，这里统一剥壳并把错误码转成 reject。
+function smokeRequest(action, data = {}) {
+  return request({ path: '/api/smoke', method: 'POST', data: { action, ...data } }).then((res) => {
+    const body = (res && res.data !== undefined ? res : {}) || {}
+    if (body.code !== undefined && body.code !== 0 && body.code !== 200) {
+      throw { code: body.code, message: body.message || '接口错误' }
+    }
+    return body.data !== undefined ? body.data : body
+  })
+}
+
+// action = getState | log | undo | deleteRecord | setLimit
+function smokeState() {
+  return smokeRequest('getState')
+}
+
+function smokeLog(reason) {
+  return smokeRequest('log', { reason })
+}
+
+function smokeDeleteRecord(idx) {
+  return smokeRequest('deleteRecord', { idx })
+}
+
+function smokeSetLimit(limit) {
+  return smokeRequest('setLimit', { limit })
+}
+
+// ---- 体重管理 ----
+
+// action = items | addItem | removeItem | records | saveRecord | removeRecord
+function fitness(action, data = {}) {
+  return request({ path: '/api/fitness', method: 'POST', data: { action, ...data } })
+}
+
 // ---- 题库 ----
 
 function getExamMeta(data = {}) {
@@ -255,6 +316,10 @@ function noteDelete(id) {
 
 module.exports = {
   BASE_URL,
+  USERID_KEY,
+  TOKEN_KEY,
+  ensureUserId,
+  isLoggedIn,
   getOpenid,
   isSheepAllowed,
   request,
@@ -267,6 +332,9 @@ module.exports = {
   uploadFile, release,
   getHomeCards, getHomeSwipers,
   echo,
+  getGoldPrice,
+  fitness,
+  smokeState, smokeLog, smokeDeleteRecord, smokeSetLimit,
   getExamMeta, getExamQuestions, getQbTree, listQbCourses, listQbBanks,
   getMessages, postMessage,
   getScoreInfo, scoreCheckin,

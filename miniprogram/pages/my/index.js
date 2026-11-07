@@ -1,24 +1,6 @@
 const api = require('../../utils/api')
 
-const USERID_KEY = 'alvey_user_id'
-const TOKEN_KEY = 'alvey_logged_in'
-
-function generateUserId() {
-  return 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8)
-}
-
-function ensureUserId() {
-  let uid = wx.getStorageSync(USERID_KEY)
-  if (!uid) {
-    uid = generateUserId()
-    wx.setStorageSync(USERID_KEY, uid)
-  }
-  return uid
-}
-
-function isLoggedIn() {
-  return !!wx.getStorageSync(TOKEN_KEY)
-}
+const { USERID_KEY, TOKEN_KEY, ensureUserId, isLoggedIn } = api
 
 function formatTime(ts) {
   const d = new Date(ts)
@@ -34,9 +16,6 @@ Page({
     isLoggedIn: false,
     userInfo: {},
     loginVisible: false,
-    pendingAvatar: '',
-    pendingNickname: '',
-    submitting: false,
 
     totalScore: 0,
     scoreRecords: [],
@@ -46,8 +25,7 @@ Page({
     settingList: [
       { name: '消息通知', icon: 'notification', type: 'notification', badge: true },
       { name: '联系客服', icon: 'service', type: 'service' },
-      { name: '关于我们', icon: 'info-circle', type: 'about' },
-      { name: '设置', icon: 'setting', type: 'setting' },
+      { name: '关于作者', icon: 'info-circle', type: 'about' },
     ],
   },
 
@@ -118,76 +96,23 @@ Page({
 
   onLogin() {
     ensureUserId()
-    this.setData({ loginVisible: true, pendingAvatar: '', pendingNickname: '' })
+    this.setData({ loginVisible: true })
   },
 
   onLoginClose() {
     this.setData({ loginVisible: false })
   },
 
-  onLoginPopupChange(e) {
-    this.setData({ loginVisible: e.detail.visible })
-  },
-
-  onChooseAvatar(e) {
-    this.setData({ pendingAvatar: e.detail.avatarUrl })
-  },
-
-  onNicknameInput(e) {
-    this.setData({ pendingNickname: e.detail.value })
-  },
-
-  async onConfirmLogin() {
-    const { pendingAvatar, pendingNickname, submitting } = this.data
-    if (submitting) return
-    if (!pendingAvatar) {
-      wx.showToast({ title: '请选择头像', icon: 'none' })
-      return
-    }
-    if (!pendingNickname || !pendingNickname.trim()) {
-      wx.showToast({ title: '请填写昵称', icon: 'none' })
-      return
-    }
-
-    this.setData({ submitting: true })
-    wx.showLoading({ title: '登录中...', mask: true })
-
-    try {
-      const userId = ensureUserId()
-
-      let avatarUrl = pendingAvatar
-      try {
-        const uploadRes = await wx.cloud.uploadFile({
-          cloudPath: `avatars/${userId}_${Date.now()}.png`,
-          filePath: pendingAvatar,
-        })
-        avatarUrl = uploadRes.fileID
-      } catch (e) {
-        console.warn('avatar upload failed, using temp path', e)
-      }
-
-      const res = await api.savePersonalInfo({
-        userId,
-        name: pendingNickname.trim(),
-        avatarFileID: avatarUrl,
-      })
-
-      wx.setStorageSync(TOKEN_KEY, true)
-      const info = res.data || res
-      wx.hideLoading()
-      this.setData({
-        loginVisible: false,
-        isLoggedIn: true,
-        userInfo: { ...info, image: avatarUrl, name: pendingNickname.trim() },
-      })
-      wx.showToast({ title: '登录成功', icon: 'success' })
-    } catch (err) {
-      wx.hideLoading()
-      console.error('login failed:', err)
-      wx.showToast({ title: '登录失败', icon: 'none' })
-    } finally {
-      this.setData({ submitting: false })
-    }
+  // 登录弹层回调：组件内部完成上传与保存
+  onLoginSuccess(e) {
+    const detail = (e && e.detail) || {}
+    this.setData({
+      loginVisible: false,
+      isLoggedIn: true,
+      userInfo: detail.info || {},
+    })
+    this.fetchProfile()
+    this.fetchScore()
   },
 
   onLogout() {
@@ -198,6 +123,10 @@ Page({
 
   onSettingClick(e) {
     const { type, name } = e.currentTarget.dataset.item
+    if (type === 'about') {
+      wx.navigateTo({ url: '/pages/about-author/index' })
+      return
+    }
     if (type === 'service') {
       return
     }

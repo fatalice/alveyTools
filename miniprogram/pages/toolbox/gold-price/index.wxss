@@ -1,0 +1,174 @@
+/* pages/toolbox/gold-price/index.wxss — 金价查询 */
+page {
+  background-color: var(--paper);
+  --td-brand-color: var(--brand);
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 60rpx;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64rpx;
+  height: 64rpx;
+}
+
+/* 价格卡片 */
+.price-card {
+  margin: 24rpx 32rpx 0;
+  padding: 36rpx 32rpx 28rpx;
+  background: var(--surface);
+  border-radius: 24rpx;
+  border: 1px solid var(--line);
+  box-shadow: 0 6rpx 24rpx rgba(26, 29, 33, 0.04);
+}
+
+.price-card__head {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+}
+
+.price-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.price-unit {
+  font-size: 24rpx;
+  color: var(--muted);
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 20rpx;
+  margin-top: 16rpx;
+}
+
+.price {
+  font-size: 64rpx;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.up {
+  color: #d03b3b;
+}
+
+.down {
+  color: var(--brand);
+}
+
+.chg {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.chg-pct {
+  font-size: 24rpx;
+}
+
+.price-meta {
+  display: flex;
+  margin-top: 28rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx solid var(--line);
+}
+
+.meta-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  font-size: 26rpx;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.meta-k {
+  font-size: 22rpx;
+  color: var(--faint);
+}
+
+.price-time {
+  font-size: 22rpx;
+  color: var(--faint);
+  margin-top: 20rpx;
+}
+
+/* 图表 */
+.chart-card {
+  margin: 24rpx 32rpx 0;
+  padding: 28rpx 24rpx 20rpx;
+  background: var(--surface);
+  border-radius: 24rpx;
+  border: 1px solid var(--line);
+  box-shadow: 0 6rpx 24rpx rgba(26, 29, 33, 0.04);
+}
+
+.chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8rpx 12rpx;
+}
+
+.chart-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 10rpx 24rpx;
+  background: var(--brand-soft);
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  color: var(--brand-deep);
+}
+
+.refresh-btn:active {
+  background: #d4ebdd;
+}
+
+.refresh-icon {
+  font-size: 28rpx;
+  line-height: 1;
+}
+
+.refreshing .refresh-icon {
+  opacity: 0.5;
+}
+
+.chart-canvas {
+  width: 100%;
+  height: 380rpx;
+  display: block;
+}
+
+.chart-empty {
+  text-align: center;
+  font-size: 24rpx;
+  color: var(--faint);
+  padding: 40rpx 0;
+}
+
+.tip {
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--faint);
+  margin-top: 28rpx;
+}

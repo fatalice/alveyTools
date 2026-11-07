@@ -1,0 +1,201 @@
+/* pages/about-author/index.wxss — 关于作者 · 休闲手账风，沿用 app.wxss 设计 token */
+page {
+  background-color: var(--paper);
+  --td-brand-color: var(--brand);
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 80rpx;
+}
+
+/* 导航栏返回键 */
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64rpx;
+  height: 64rpx;
+}
+
+/* 顶部 */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 56rpx 48rpx 20rpx;
+}
+
+.avatar-wrap {
+  position: relative;
+  margin-bottom: 28rpx;
+}
+
+.avatar-sticker {
+  position: absolute;
+  top: -10rpx;
+  left: -14rpx;
+  font-size: 56rpx;
+  transform: rotate(-18deg);
+  z-index: 2;
+}
+
+.avatar-fallback {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--amber-soft) 0%, #f0c9a6 100%);
+  color: var(--amber);
+  font-size: 72rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10rpx 30rpx rgba(184, 90, 34, 0.16);
+}
+
+.name {
+  font-size: 46rpx;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 1rpx;
+}
+
+.slogan {
+  font-size: 28rpx;
+  color: var(--muted);
+  margin-top: 12rpx;
+}
+
+.mini-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12rpx;
+  margin-top: 20rpx;
+}
+
+.mini-tag {
+  padding: 8rpx 22rpx;
+  background: var(--surface);
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+
+/* 区块 */
+.block {
+  margin: 44rpx 40rpx 0;
+}
+
+.block-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 22rpx;
+}
+
+/* 气泡 */
+.bubble {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 28rpx;
+  padding: 32rpx 32rpx 32rpx 40rpx;
+  font-size: 28rpx;
+  color: var(--ink-2);
+  line-height: 1.85;
+  box-shadow: 0 6rpx 24rpx rgba(26, 29, 33, 0.04);
+}
+
+/* 气泡小尾巴 */
+.bubble::before {
+  content: '';
+  position: absolute;
+  left: 24rpx;
+  top: -16rpx;
+  width: 0;
+  height: 0;
+  border-left: 16rpx solid transparent;
+  border-right: 16rpx solid transparent;
+  border-bottom: 16rpx solid var(--surface);
+}
+
+/* 标签 */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.chip {
+  padding: 12rpx 28rpx;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+}
+
+.chip:nth-child(3n + 1) {
+  background: var(--brand-soft);
+  color: var(--brand-deep);
+}
+
+.chip:nth-child(3n + 2) {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.chip:nth-child(3n + 3) {
+  background: var(--surface-2);
+  color: var(--ink-2);
+}
+
+/* 二维码 */
+.qr-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 32rpx;
+  padding: 44rpx 40rpx 36rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8rpx 28rpx rgba(26, 29, 33, 0.05);
+}
+
+.qr-box {
+  width: 380rpx;
+  height: 380rpx;
+  box-sizing: border-box;
+  padding: 20rpx;
+  border: 4rpx dashed var(--line);
+  border-radius: 28rpx;
+  background: #fff;
+}
+
+.qr-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 12rpx;
+}
+
+.qr-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink);
+  margin-top: 28rpx;
+}
+
+.qr-desc {
+  font-size: 24rpx;
+  color: var(--faint);
+  margin-top: 12rpx;
+}
+
+/* 页脚 */
+.footer {
+  text-align: center;
+  font-size: 22rpx;
+  color: var(--faint);
+  margin-top: 56rpx;
+}

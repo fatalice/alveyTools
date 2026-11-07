@@ -1,0 +1,102 @@
+<t-navbar title="记一支" fixed placeholder>
+  <view slot="left" class="back-btn" bindtap="onBack">
+    <t-icon name="chevron-left" size="44rpx" color="#333" />
+  </view>
+</t-navbar>
+
+<view class="app">
+  <!-- 顶栏 -->
+  <view class="app-header">
+    <view class="header-left">
+      <text class="date-main">{{dateMain}}</text>
+      <text class="date-sub">{{dateSub}}</text>
+    </view>
+    <view class="streak">
+      <view class="streak-dot"></view>
+      <text>{{streakText}}</text>
+    </view>
+  </view>
+
+  <!-- Hero -->
+  <view class="hero">
+    <view class="hero-top">
+      <text class="hero-title">今日吸烟额度</text>
+      <text class="hero-tag" bindtap="openLimit">调整额度</text>
+    </view>
+    <smoke-ring smoked="{{smoked}}" limit="{{limit}}"></smoke-ring>
+
+    <!-- 记录入口：图标按钮 -->
+    <view class="log-btn" bindtap="openReason">
+      <text class="log-btn__icon">🚬</text>
+      <text class="log-btn__cap">记一支</text>
+    </view>
+
+    <view class="stats">
+      <view class="stat"><text class="b">{{limit}}</text><text class="s">今日总量</text></view>
+      <view class="stat"><text class="b">{{smoked}}</text><text class="s">已抽</text></view>
+      <view class="stat"><text class="b">{{statLeft}}</text><text class="s">剩余</text></view>
+    </view>
+    <view class="status-line {{statusCls}}">
+      <text>{{statusHead}}</text>
+      <text class="b" wx:if="{{statusNum}}">{{statusNum}}</text>
+      <text>{{statusTail}}</text>
+    </view>
+    <text class="away">{{awayText}}</text>
+  </view>
+
+  <!-- 最近 7 天 -->
+  <view class="chart-card">
+    <view class="sec-title">
+      <text class="h2">最近 7 天</text>
+      <text class="hint">{{chartHint}}</text>
+    </view>
+    <smoke-bars week="{{week}}" limit="{{limit}}"></smoke-bars>
+  </view>
+
+  <!-- 今日记录 -->
+  <view class="timeline-card">
+    <view class="sec-title">
+      <text class="h2">今日记录</text>
+      <text class="hint">{{recCount}}</text>
+    </view>
+    <view class="timeline">
+      <view wx:if="{{!timeline.length}}" class="empty">
+        <text>今天还没有记录</text>
+        <text>点上方「记一支」记下第一支</text>
+      </view>
+      <view wx:for="{{timeline}}" wx:key="idx" class="record">
+        <view class="rec-dot"></view>
+        <text class="rec-time">{{item.time}}</text>
+        <text class="rec-reason">{{item.reason}}</text>
+        <view wx:if="{{confirmIdx === item.idx}}" class="rec-del confirm" data-idx="{{item.idx}}" bindtap="delRecord">确认删除</view>
+        <view wx:else class="rec-del" data-idx="{{item.idx}}" bindtap="delRecord">删除</view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 记一支弹层 -->
+<bottom-sheet show="{{reasonSheet}}" title="记下这一支" sub="选一个诱因，方便之后看清什么时刻最容易想抽烟" bind:close="closeSheets">
+  <view class="reason-grid">
+    <view
+      wx:for="{{reasons}}"
+      wx:key="*this"
+      class="reason {{selReason === item ? 'sel' : ''}}"
+      data-r="{{item}}"
+      bindtap="selReasonFn"
+    >{{item}}</view>
+  </view>
+  <button class="sheet-btn" bindtap="confirmLog">记下这一支</button>
+  <text class="sheet-note">记录会立即计入今日已抽数量</text>
+</bottom-sheet>
+
+<!-- 设额度弹层 -->
+<bottom-sheet show="{{limitSheet}}" title="今日吸烟额度" sub="设定每日上限，超限时页面会提醒你收手" bind:close="closeSheets">
+  <view class="stepper">
+    <view class="step-btn {{stepMinusDisabled ? 'disabled' : ''}}" bindtap="stepMinus">−</view>
+    <text class="stepper-num">{{curLimit}}</text>
+    <view class="step-btn {{stepPlusDisabled ? 'disabled' : ''}}" bindtap="stepPlus">+</view>
+  </view>
+  <button class="sheet-btn" bindtap="saveLimit">保存额度</button>
+  <text class="sheet-note">根/天 · 可随时调整，建议从当前日均开始逐步下调</text>
+</bottom-sheet>

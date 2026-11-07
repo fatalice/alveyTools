@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>菜谱大全 · alveyTools</title>
+<style>
+  /* Layout: 居中手机框，菜谱浏览页：分类筛选 + 列表 + 点赞 */
+  :root {
+    --ink: #1a1d21;
+    --paper: #f4f4f1;
+    --surface: #ffffff;
+    --surface-2: #efefe9;
+    --line: #e4e4dd;
+    --muted: #868a86;
+    --faint: #b4b8b3;
+    --brand: #1f8a4c;
+    --brand-deep: #156a39;
+    --brand-soft: #e7f3ec;
+    --amber: #b85a22;
+    --amber-soft: #f4e4d2;
+    --like: #d4506a;
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 1px 2px rgba(20,22,18,.04), 0 6px 18px rgba(20,22,18,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #e9eae3; --paper: #14150f; --surface: #1d1e17; --surface-2: #26271f;
+      --line: #32331e; --muted: #90948a; --faint: #5a5d54;
+      --brand: #4caa6a; --brand-deep: #3a8a52; --brand-soft: #1f2e22;
+      --amber: #d98a4e; --amber-soft: #2e2418;
+      --like: #e0708a;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #e9eae3; --paper: #14150f; --surface: #1d1e17; --surface-2: #26271f;
+    --line: #32331e; --muted: #90948a; --faint: #5a5d54;
+    --brand: #4caa6a; --brand-deep: #3a8a52; --brand-soft: #1f2e22;
+    --amber: #d98a4e; --amber-soft: #2e2418;
+    --like: #e0708a;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.4);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--paper);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+      "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    display: flex; align-items: flex-start; justify-content: center;
+    min-height: 100%;
+    padding: 40px max(24px, env(safe-area-inset-left, 0px)) 64px max(24px, env(safe-area-inset-right, 0px));
+  }
+  .stage { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .stage-meta {
+    font-size: 12px; letter-spacing: .04em; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .stage-meta b { color: var(--ink); font-weight: 600; }
+
+  .phone {
+    width: 390px; height: 844px; background: var(--paper);
+    border-radius: 44px;
+    box-shadow: 0 0 0 11px #1c1d1f, 0 0 0 12px #2a2b2d,
+                0 30px 60px rgba(0,0,0,.18), 0 8px 24px rgba(0,0,0,.12);
+    overflow: hidden; position: relative; display: flex; flex-direction: column;
+  }
+  @media (prefers-color-scheme: dark) {
+    .phone { box-shadow: 0 0 0 11px #0a0a0a, 0 0 0 12px #1c1c1c, 0 30px 60px rgba(0,0,0,.5); }
+  }
+  .notch {
+    position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 32px; background: #1c1d1f; border-radius: 18px; z-index: 5;
+  }
+  @media (prefers-color-scheme: dark) { .notch { background: #000; } }
+
+  .statusbar {
+    height: 54px; padding: 18px 28px 0;
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 15px; font-weight: 600; color: var(--ink);
+    font-variant-numeric: tabular-nums; flex-shrink: 0;
+  }
+  .statusbar .right { display: flex; align-items: center; gap: 6px; }
+  .statusbar svg { display: block; }
+
+  /* 子页导航栏：返回 + 居中标题，右侧让位胶囊 */
+  .navbar {
+    padding: 8px 110px 12px 8px;
+    display: flex; align-items: center; gap: 4px;
+    flex-shrink: 0;
+  }
+  .nav-back {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink); flex-shrink: 0; cursor: pointer;
+  }
+  .nav-back:active { background: var(--surface-2); }
+  .nav-title {
+    flex: 1; text-align: center; font-size: 16px; font-weight: 600; color: var(--ink);
+    margin-left: -36px; /* 抵消返回键宽度，使标题真正居中 */
+  }
+
+  .capsule {
+    position: absolute; top: 50px; right: 12px;
+    width: 87px; height: 32px; border-radius: 16px;
+    border: 1px solid var(--line); background: var(--surface);
+    display: flex; align-items: center; justify-content: space-around;
+    color: var(--ink); z-index: 6;
+  }
+  .capsule .dots { display: flex; gap: 3px; }
+  .capsule .dots i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+  .capsule .divider { width: 1px; height: 16px; background: var(--line); }
+  .capsule .close {
+    width: 13px; height: 13px; border-radius: 50%;
+    border: 1.4px solid currentColor; position: relative;
+  }
+  .capsule .close::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    width: 6px; height: 6px; transform: translate(-50%,-50%);
+    border-radius: 50%; background: currentColor;
+  }
+
+  /* 双 tab —— 固定在底部，做成底部按钮栏 */
+  .tabs {
+    display: flex; gap: 8px; flex-shrink: 0;
+    padding: 10px 16px;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+  }
+  .tab {
+    flex: 1; text-align: center; padding: 12px 0;
+    font-size: 14px; font-weight: 500; color: var(--muted);
+    border-radius: 12px; cursor: pointer; transition: all .15s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .tab svg { width: 19px; height: 19px; }
+  .tab.active { color: var(--amber); background: var(--amber-soft); }
+  .tab .badge {
+    font-size: 11px; color: var(--faint); font-variant-numeric: tabular-nums;
+  }
+  .tab.active .badge { color: var(--amber); }
+
+  .screen { flex: 1; overflow-y: auto; scrollbar-width: none; }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* 分类 chips（仅分类 tab） */
+  .chips {
+    display: flex; gap: 8px; padding: 0 16px 14px;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0; padding: 7px 14px; font-size: 13px; font-weight: 500;
+    color: var(--muted); background: var(--surface); border: 1px solid var(--line);
+    border-radius: 999px; cursor: pointer; white-space: nowrap;
+  }
+  .chip.active { color: var(--amber); background: var(--amber-soft); border-color: transparent; }
+
+  /* 菜谱列表 */
+  .recipes { padding: 0 16px 24px; display: flex; flex-direction: column; gap: 14px; }
+
+  .recipe-card {
+    background: var(--surface); border-radius: var(--radius-md);
+    overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--line);
+    display: flex; cursor: pointer;
+  }
+  .recipe-card:active { transform: scale(.99); }
+  .recipe-card .thumb {
+    width: 124px; height: 124px; flex-shrink: 0; background: #ddd;
+  }
+  .recipe-card .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .recipe-card .info {
+    flex: 1; padding: 12px 14px; display: flex; flex-direction: column;
+    min-width: 0;
+  }
+  .recipe-card .cat {
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--amber); font-weight: 600;
+  }
+  .recipe-card .title {
+    font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.3;
+    margin-top: 3px; text-wrap: balance;
+  }
+  .recipe-card .meta {
+    margin-top: auto; display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums;
+  }
+  .recipe-card .meta .dot { width: 2px; height: 2px; border-radius: 50%; background: var(--faint); }
+  .recipe-card .like {
+    margin-left: auto; display: flex; align-items: center; gap: 4px;
+    color: var(--faint); font-size: 12px; font-variant-numeric: tabular-nums;
+    cursor: pointer; padding: 4px 2px;
+  }
+  .recipe-card .like svg { width: 17px; height: 17px; transition: transform .12s; }
+  .recipe-card .like.liked { color: var(--like); }
+  .recipe-card .like.liked svg { fill: var(--like); stroke: var(--like); transform: scale(1.08); }
+  .recipe-card .like:active svg { transform: scale(.85); }
+
+  /* 空状态（saved tab 无内容时） */
+  .empty {
+    padding: 80px 32px; text-align: center; color: var(--muted);
+  }
+  .empty svg { width: 44px; height: 44px; opacity: .4; margin-bottom: 14px; }
+  .empty .t { font-size: 14px; color: var(--ink); font-weight: 500; }
+  .empty .d { font-size: 12px; color: var(--faint); margin-top: 6px; line-height: 1.5; }
+
+  /* PGC 标识条 */
+  .pgc-bar {
+    margin: 0 16px 14px; padding: 8px 12px;
+    background: var(--surface-2); border-radius: var(--sm);
+    font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 6px;
+  }
+  .pgc-bar svg { width: 13px; height: 13px; color: var(--brand); }
+  .pgc-bar b { color: var(--ink); font-weight: 600; }
+
+  .home-indicator {
+    position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+    width: 134px; height: 5px; border-radius: 3px; background: var(--ink); opacity: .35;
+  }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  @media (max-width: 440px) {
+    body { padding: 16px; }
+    .phone { transform: scale(.9); transform-origin: top center; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <div class="stage-meta">菜谱大全 · <b>新层级</b> · PGC 官方菜谱 · 双 tab 浏览</div>
+
+  <div class="phone" role="img" aria-label="菜谱大全页 mockup">
+
+    <div class="notch"></div>
+
+    <div class="statusbar">
+      <span>9:41</span>
+      <span class="right">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4.5" y="4" width="3" height="7" rx="1"/><rect x="9" y="2" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 4 C4 1 11 1 14 4"/><path d="M3.5 6.5 C5 5 10 5 11.5 6.5"/><circle cx="7.5" cy="9" r="1" fill="currentColor"/></svg>
+        <svg width="25" height="11" viewBox="0 0 25 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="1" y="1" width="20" height="9" rx="2"/><rect x="3" y="3" width="14" height="5" rx="1" fill="currentColor"/><rect x="22" y="3.5" width="2" height="4" rx="1" fill="currentColor"/></svg>
+      </span>
+    </div>
+
+    <!-- 子页导航栏 -->
+    <div class="navbar">
+      <div class="nav-back">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18 9 12l6-6"/></svg>
+      </div>
+      <div class="nav-title">菜谱大全</div>
+    </div>
+    <div class="capsule" aria-label="微信胶囊占位">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="divider"></span>
+      <span class="close"></span>
+    </div>
+
+    <!-- 屏幕 -->
+    <div class="screen">
+
+      <!-- PGC 提示条 -->
+      <div class="pgc-bar" style="margin-top: 4px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.5 8 8 11 4.5-3 8-6 8-11V5z"/><path d="M9 12l2 2 4-4"/></svg>
+        全部菜谱由 <b>alveyTools 官方</b> 编辑发布，仅官方可新增。
+      </div>
+
+      <!-- 分类 chips -->
+      <div class="chips" id="chips">
+        <div class="chip active" data-cat="all">全部</div>
+        <div class="chip" data-cat="brunch">Brunch</div>
+        <div class="chip" data-cat="steak">牛排</div>
+        <div class="chip" data-cat="pasta">意面</div>
+        <div class="chip" data-cat="salad">沙拉</div>
+        <div class="chip" data-cat="dessert">甜点</div>
+      </div>
+
+      <!-- 浏览列表 -->
+      <div class="recipes" id="browseList"></div>
+
+      <!-- 已收藏列表 -->
+      <div class="recipes" id="savedList" hidden></div>
+
+    </div>
+
+    <!-- 底部双 tab 按钮 -->
+    <div class="tabs">
+      <div class="tab active" data-tab="browse">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h12"/></svg>
+        分类<span class="badge">6</span>
+      </div>
+      <div class="tab" data-tab="saved">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C1 9 3 5 7 5c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg>
+        已收藏<span class="badge" id="savedCount">0</span>
+      </div>
+    </div>
+
+    <div class="home-indicator"></div>
+
+  </div>
+
+  <div class="stage-meta">可点击切换 tab、选分类、点心形收藏 · 数据为示例</div>
+
+</div>
+
+<script>
+  // 示例菜谱数据（PGC）
+  const RECIPES = [
+    { id: 1, cat: 'brunch', catLabel: 'Brunch', title: 'Shakshuka 番茄炖蛋', time: '25 分', diff: '简单', seed: 'shakshuka' },
+    { id: 2, cat: 'brunch', catLabel: 'Brunch', title: 'Dutch Baby 德式松饼', time: '30 分', diff: '简单', seed: 'dutchbaby' },
+    { id: 3, cat: 'steak', catLabel: '牛排', title: 'Reverse-Seared Ribeye 反煎肋眼', time: '45 分', diff: '中等', seed: 'ribeye' },
+    { id: 4, cat: 'steak', catLabel: '牛排', title: 'Pan-Seared Strip 煎西冷', time: '20 分', diff: '中等', seed: 'stripsteak' },
+    { id: 5, cat: 'pasta', catLabel: '意面', title: 'Cacio e Pepe 奶酪胡椒面', time: '15 分', diff: '简单', seed: 'cacioepepe' },
+    { id: 6, cat: 'pasta', catLabel: '意面', title: 'Spaghetti Carbonara 卡博纳拉', time: '20 分', diff: '中等', seed: 'carbonara' },
+    { id: 7, cat: 'salad', catLabel: '沙拉', title: 'Niçoise Salad 尼斯沙拉', time: '20 分', diff: '简单', seed: 'nicoise' },
+    { id: 8, cat: 'dessert', catLabel: '甜点', title: 'Crème Brûlée 焦糖布丁', time: '50 分', diff: '中等', seed: 'cremebrulee' },
+  ];
+
+  const liked = new Set();
+
+  const browseList = document.getElementById('browseList');
+  const savedList = document.getElementById('savedList');
+  const savedCount = document.getElementById('savedCount');
+
+  function cardHTML(r) {
+    const isLiked = liked.has(r.id);
+    return `
+      <div class="recipe-card" data-id="${r.id}">
+        <div class="thumb"><img src="https://picsum.photos/seed/alvey-${r.seed}/248/248" alt="${r.title}"></div>
+        <div class="info">
+          <div class="cat">${r.catLabel}</div>
+          <div class="title">${r.title}</div>
+          <div class="meta">
+            <span>${r.time}</span><span class="dot"></span>
+            <span>${r.diff}</span>
+            <span class="like ${isLiked ? 'liked' : ''}" data-like="${r.id}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9C1 9 3 5 7 5c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg>
+              ${isLiked ? '已收藏' : '收藏'}
+            </span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderBrowse(cat) {
+    const list = cat === 'all' ? RECIPES : RECIPES.filter(r => r.cat === cat);
+    browseList.innerHTML = list.map(cardHTML).join('') ||
+      `<div class="empty"><div class="t">该分类暂无菜谱</div></div>`;
+  }
+
+  function renderSaved() {
+    const list = RECIPES.filter(r => liked.has(r.id));
+    if (list.length === 0) {
+      savedList.innerHTML = `
+        <div class="empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-9.5-9C1 9 3 5 7 5c2 0 3.5 1 5 3 1.5-2 3-3 5-3 4 0 6 4 4.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg>
+          <div class="t">还没有收藏的菜谱</div>
+          <div class="d">在「分类」里点心形按钮<br>收藏的菜谱会出现在这里</div>
+        </div>`;
+    } else {
+      savedList.innerHTML = list.map(cardHTML).join('');
+    }
+    savedCount.textContent = list.length;
+  }
+
+  // tab 切换
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      const tab = t.dataset.tab;
+      if (tab === 'browse') {
+        browseList.hidden = false;
+        savedList.hidden = true;
+        document.getElementById('chips').style.display = 'flex';
+      } else {
+        browseList.hidden = true;
+        savedList.hidden = false;
+        document.getElementById('chips').style.display = 'none';
+        renderSaved();
+      }
+    });
+  });
+
+  // 分类切换
+  document.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      renderBrowse(c.dataset.cat);
+    });
+  });
+
+  // 点赞（事件委托）
+  document.querySelector('.screen').addEventListener('click', e => {
+    const likeEl = e.target.closest('[data-like]');
+    if (!likeEl) return;
+    e.stopPropagation();
+    const id = Number(likeEl.dataset.like);
+    if (liked.has(id)) { liked.delete(id); } else { liked.add(id); }
+    // 重渲染当前 tab
+    const activeTab = document.querySelector('.tab.active').dataset.tab;
+    if (activeTab === 'browse') {
+      const activeCat = document.querySelector('.chip.active').dataset.cat;
+      renderBrowse(activeCat);
+    } else {
+      renderSaved();
+    }
+  });
+
+  // 初始
+  renderBrowse('all');
+</script>
+</body>
+</html>

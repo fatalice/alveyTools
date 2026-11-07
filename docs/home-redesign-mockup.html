@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>alveyTools 首页重设计</title>
+<style>
+  /* Layout: 居中手机框，便当格工具聚合 + 食谱主推卡 */
+  :root {
+    --ink: #1a1d21;
+    --paper: #f4f4f1;
+    --surface: #ffffff;
+    --surface-2: #efefe9;
+    --line: #e4e4dd;
+    --muted: #868a86;
+    --faint: #b4b8b3;
+    --brand: #1f8a4c;
+    --brand-deep: #156a39;
+    --brand-soft: #e7f3ec;
+    --amber: #b85a22;
+    --amber-soft: #f4e4d2;
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 1px 2px rgba(20,22,18,.04), 0 6px 18px rgba(20,22,18,.06);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #e9eae3;
+      --paper: #14150f;
+      --surface: #1d1e17;
+      --surface-2: #26271f;
+      --line: #32331e;
+      --muted: #90948a;
+      --faint: #5a5d54;
+      --brand: #4caa6a;
+      --brand-deep: #3a8a52;
+      --brand-soft: #1f2e22;
+      --amber: #d98a4e;
+      --amber-soft: #2e2418;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.4);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #e9eae3;
+    --paper: #14150f;
+    --surface: #1d1e17;
+    --surface-2: #26271f;
+    --line: #32331e;
+    --muted: #90948a;
+    --faint: #5a5d54;
+    --brand: #4caa6a;
+    --brand-deep: #3a8a52;
+    --brand-soft: #1f2e22;
+    --amber: #d98a4e;
+    --amber-soft: #2e2418;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.4);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--paper);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+      "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+    color: var(--ink);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100%;
+    padding: 40px max(24px, env(safe-area-inset-left, 0px)) 64px max(24px, env(safe-area-inset-right, 0px));
+  }
+
+  /* 页面外圈说明 */
+  .stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+  }
+  .stage-meta {
+    font-size: 12px;
+    letter-spacing: .04em;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .stage-meta b { color: var(--ink); font-weight: 600; }
+
+  /* 手机框 */
+  .phone {
+    width: 390px;
+    height: 844px;
+    background: var(--paper);
+    border-radius: 44px;
+    box-shadow: 0 0 0 11px #1c1d1f, 0 0 0 12px #2a2b2d,
+                0 30px 60px rgba(0,0,0,.18), 0 8px 24px rgba(0,0,0,.12);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  @media (prefers-color-scheme: dark) {
+    .phone { box-shadow: 0 0 0 11px #0a0a0a, 0 0 0 12px #1c1c1c, 0 30px 60px rgba(0,0,0,.5); }
+  }
+
+  /* 状态栏 */
+  .statusbar {
+    height: 54px;
+    padding: 18px 28px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .statusbar .right { display: flex; align-items: center; gap: 6px; }
+  .statusbar svg { display: block; }
+
+  /* 导航栏 */
+  .navbar {
+    padding: 6px 16px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    /* 右侧给微信胶囊留出空间 */
+    padding-right: 110px;
+  }
+  .nav-greet { display: flex; flex-direction: column; gap: 2px; }
+  .nav-greet .hi {
+    font-size: 16px; font-weight: 600; color: var(--ink); letter-spacing: -.01em;
+  }
+  .nav-greet .date {
+    font-size: 11px; color: var(--muted);
+    font-variant-numeric: tabular-nums; letter-spacing: .02em;
+  }
+
+  /* 微信胶囊占位（右上，固定不可用） */
+  .capsule {
+    position: absolute;
+    top: 50px;
+    right: 12px;
+    width: 87px;
+    height: 32px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    color: var(--ink);
+    z-index: 6;
+  }
+  .capsule .dots { display: flex; gap: 3px; }
+  .capsule .dots i { width: 3px; height: 3px; border-radius: 50%; background: currentColor; }
+  .capsule .divider { width: 1px; height: 16px; background: var(--line); }
+  .capsule .close {
+    width: 13px; height: 13px; border-radius: 50%;
+    border: 1.4px solid currentColor; position: relative;
+  }
+  .capsule .close::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    width: 6px; height: 6px; transform: translate(-50%,-50%);
+    border-radius: 50%; background: currentColor;
+  }
+
+  /* 可滚动内容区 */
+  .screen {
+    flex: 1;
+    overflow-y: auto;
+    padding: 4px 16px 16px;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* 问候条 */
+  .greet {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 4px 14px;
+  }
+  .greet .hi { font-size: 15px; color: var(--ink); font-weight: 600; }
+  .greet .hi span { color: var(--muted); font-weight: 400; }
+  .greet .date {
+    font-size: 12px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 食谱主推卡 */
+  .recipe {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    aspect-ratio: 16 / 11;
+    background: #2a2018;
+    box-shadow: var(--shadow);
+    margin-bottom: 22px;
+  }
+  .recipe img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: .92;
+  }
+  .recipe .scrim {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 38%, rgba(20,16,10,.78) 100%);
+  }
+  .recipe .eyebrow {
+    position: absolute; top: 14px; left: 14px;
+    font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+    color: #f4e4d2; background: rgba(184,90,34,.85);
+    padding: 4px 9px; border-radius: 999px; font-weight: 600;
+  }
+  .recipe .body {
+    position: absolute; left: 16px; right: 16px; bottom: 14px;
+    color: #fff;
+  }
+  .recipe .title {
+    font-size: 18px; font-weight: 700; line-height: 1.25;
+    text-shadow: 0 1px 8px rgba(0,0,0,.4);
+    text-wrap: balance;
+  }
+  .recipe .meta {
+    margin-top: 6px;
+    font-size: 11px; color: rgba(255,255,255,.82);
+    font-variant-numeric: tabular-nums;
+    display: flex; gap: 10px; align-items: center;
+  }
+  .recipe .meta .dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.5); }
+  .recipe .enter {
+    position: absolute; right: 14px; bottom: 14px;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(255,255,255,.92); color: #b85a22;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 700;
+  }
+
+  /* 分区标签 */
+  .sect-label {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 4px 10px;
+  }
+  .sect-label .t { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .sect-label .more { font-size: 11px; color: var(--faint); }
+
+  /* 便当格 */
+  .bento { display: flex; flex-direction: column; gap: 12px; }
+  .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .tile {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    transition: transform .12s ease;
+  }
+  .tile:active { transform: scale(.985); }
+
+  .tile .ico {
+    width: 38px; height: 38px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--brand-soft); color: var(--brand-deep);
+  }
+  .tile .ico svg { width: 20px; height: 20px; }
+  .tile .name { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .tile .desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+  /* 横向大卡（工具箱） */
+  .tile-wide {
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+  }
+  .tile-wide .ico { width: 44px; height: 44px; border-radius: 13px; }
+  .tile-wide .ico svg { width: 22px; height: 22px; }
+  .tile-wide .txt { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+  .tile-wide .name { font-size: 16px; }
+  .tile-wide .desc { font-size: 12px; }
+  .tile-wide .count {
+    font-size: 11px; color: var(--brand-deep); background: var(--brand-soft);
+    padding: 3px 9px; border-radius: 999px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* 羊圈卡（社区） */
+  .tile-sheep .ico { background: var(--amber-soft); color: var(--amber); }
+  .tile-sheep .tag {
+    font-size: 10px; color: var(--amber); background: var(--amber-soft);
+    padding: 2px 7px; border-radius: 999px; font-weight: 600;
+    align-self: flex-start;
+  }
+
+  /* 菜谱大全卡 */
+  .tile-recipe .ico { background: var(--amber-soft); color: var(--amber); }
+  .tile-recipe .count {
+    color: var(--amber); background: var(--amber-soft);
+  }
+
+  /* 开心羊圈：私人领域大卡 */
+  .tile-pen {
+    padding: 16px 16px 6px;
+    gap: 14px;
+  }
+  .tile-pen .ico { background: var(--amber-soft); color: var(--amber); width: 40px; height: 40px; border-radius: 12px; }
+  .tile-pen .ico svg { width: 21px; height: 21px; }
+  .pen-head {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .pen-title { display: flex; align-items: center; gap: 12px; }
+  .pen-title .name { font-size: 16px; font-weight: 600; color: var(--ink); }
+  .pen-title .desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .tile-pen .tag {
+    font-size: 10px; color: var(--amber); background: var(--amber-soft);
+    padding: 3px 8px; border-radius: 999px; font-weight: 600;
+    flex-shrink: 0;
+  }
+  .pen-list { display: flex; flex-direction: column; }
+  .pen-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 4px;
+    border-top: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .pen-item:active { background: var(--surface-2); }
+  .pen-ico {
+    width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--surface-2); color: var(--muted);
+  }
+  .pen-ico svg { width: 17px; height: 17px; }
+  .pen-name { font-size: 14px; font-weight: 500; color: var(--ink); flex-shrink: 0; }
+  .pen-meta { font-size: 12px; color: var(--faint); flex: 1; }
+  .pen-arrow { font-size: 18px; color: var(--faint); }
+
+  /* 底部 tab bar */
+  .tabbar {
+    height: 78px;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 10px;
+    flex-shrink: 0;
+  }
+  .tabbar .tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font-size: 10px; color: var(--faint);
+  }
+  .tabbar .tab.active { color: var(--brand); }
+  .tabbar .tab svg { width: 24px; height: 24px; }
+
+  /* 底部 home 指示条 */
+  .home-indicator {
+    position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+    width: 134px; height: 5px; border-radius: 3px; background: var(--ink);
+    opacity: .35;
+  }
+
+  /* 顶部刘海 */
+  .notch {
+    position: absolute; top: 11px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 32px; background: #1c1d1f; border-radius: 18px;
+    z-index: 5;
+  }
+  @media (prefers-color-scheme: dark) { .notch { background: #000; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tile { transition: none; }
+  }
+
+  /* 窄屏：手机框缩放 */
+  @media (max-width: 440px) {
+    body { padding: 16px; }
+    .phone { transform: scale(.92); transform-origin: top center; }
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <div class="stage-meta">alveyTools · 首页重设计草案 · <b>方案 A</b> · 便当格 + 食谱主推</div>
+
+  <div class="phone" role="img" aria-label="alveyTools 小程序首页 mockup">
+
+    <div class="notch"></div>
+
+    <!-- 状态栏 -->
+    <div class="statusbar">
+      <span>9:41</span>
+      <span class="right">
+        <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="6" width="3" height="5" rx="1"/><rect x="4.5" y="4" width="3" height="7" rx="1"/><rect x="9" y="2" width="3" height="9" rx="1"/><rect x="13.5" y="0" width="3" height="11" rx="1"/></svg>
+        <svg width="15" height="11" viewBox="0 0 15 11" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 4 C4 1 11 1 14 4"/><path d="M3.5 6.5 C5 5 10 5 11.5 6.5"/><circle cx="7.5" cy="9" r="1" fill="currentColor"/></svg>
+        <svg width="25" height="11" viewBox="0 0 25 11" fill="none" stroke="currentColor" stroke-width="1"><rect x="1" y="1" width="20" height="9" rx="2"/><rect x="3" y="3" width="14" height="5" rx="1" fill="currentColor"/><rect x="22" y="3.5" width="2" height="4" rx="1" fill="currentColor"/></svg>
+      </span>
+    </div>
+
+    <!-- 导航栏：左侧问候+日期，右侧留给微信胶囊 -->
+    <div class="navbar">
+      <div class="nav-greet">
+        <div class="hi">下午好</div>
+        <div class="date">周五 · 10/31</div>
+      </div>
+    </div>
+
+    <!-- 微信胶囊占位（右上，固定不可用） -->
+    <div class="capsule" aria-label="微信胶囊占位">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <span class="divider"></span>
+      <span class="close"></span>
+    </div>
+
+    <!-- 屏幕 -->
+    <div class="screen">
+
+      <!-- 食谱主推卡 -->
+      <div class="recipe">
+        <img src="https://picsum.photos/seed/alvey-recipe-bowl/720/495" alt="今日食谱">
+        <div class="scrim"></div>
+        <div class="eyebrow">今日食谱</div>
+        <div class="body">
+          <div class="title">番茄炖牛腩 · 温润一锅</div>
+          <div class="meta">
+            <span>35 分钟</span>
+            <span class="dot"></span>
+            <span>中等难度</span>
+            <span class="dot"></span>
+            <span>4 人份</span>
+          </div>
+        </div>
+        <div class="enter">›</div>
+      </div>
+
+      <!-- 全部工具 -->
+      <div class="sect-label">
+        <span class="t">全部工具</span>
+        <span class="more">3 项</span>
+      </div>
+
+      <div class="bento">
+
+        <!-- 菜谱大全：横向大卡 -->
+        <div class="tile tile-wide tile-recipe">
+          <div class="ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18H6z"/><path d="M6 9h12M10 3v18"/></svg>
+          </div>
+          <div class="txt">
+            <div class="name">菜谱大全</div>
+            <div class="desc">西式菜谱 · 官方精选</div>
+          </div>
+          <div class="count">PGC</div>
+        </div>
+
+        <!-- 工具箱：横向大卡 -->
+        <div class="tile tile-wide">
+          <div class="ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.3 2.3-2.7-.7-.7-2.7z"/></svg>
+          </div>
+          <div class="txt">
+            <div class="name">工具箱</div>
+            <div class="desc">汇率换算等实用小工具</div>
+          </div>
+          <div class="count">12 个</div>
+        </div>
+
+        <!-- 开心羊圈：横向大卡，单个入口 -->
+        <div class="tile tile-wide tile-sheep">
+          <div class="ico">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="11" r="3"/><circle cx="15" cy="11" r="3"/><circle cx="12" cy="7" r="2.5"/><path d="M8 16c0 2 1.5 3 4 3s4-1 4-3"/></svg>
+          </div>
+          <div class="txt">
+            <div class="name">开心羊圈</div>
+            <div class="desc">考试 · 笔记 · 社区，你的私人领地</div>
+          </div>
+          <span class="tag">私人</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- tab bar -->
+    <div class="tabbar">
+      <div class="tab active">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 3 11h2v9h5v-6h4v6h5v-9h2z"/></svg>
+        首页
+      </div>
+      <div class="tab">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+        我的
+      </div>
+    </div>
+
+    <div class="home-indicator"></div>
+
+  </div>
+
+  <div class="stage-meta">点击交互、真机栅格 rpx 已按 375pt 基准换算 · 可直接落到 <b>wxml/wxss</b></div>
+
+</div>
+</body>
+</html>

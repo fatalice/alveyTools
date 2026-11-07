@@ -1,0 +1,103 @@
+<view class="page">
+  <!-- PGC 提示条 -->
+  <view class="pgc-bar">
+    <text class="pgc-ico">🛡</text>
+    <text class="pgc-text">全部菜谱由 <text class="pgc-official">alveyTools 官方</text> 编辑发布，仅官方可新增。</text>
+  </view>
+
+  <!-- 分类 chips（仅分类 tab 显示） -->
+  <scroll-view scroll-x class="chips" wx:if="{{tab === 'browse'}}" enhanced show-scrollbar="{{false}}">
+    <view
+      class="chip {{activeCat === item.key ? 'active' : ''}}"
+      wx:for="{{cats}}"
+      wx:key="key"
+      data-cat="{{item.key}}"
+      bindtap="onCatTap"
+    >{{item.label}}</view>
+  </scroll-view>
+
+  <!-- 浏览列表 -->
+  <view class="list" wx:if="{{tab === 'browse'}}">
+    <view
+      class="card"
+      wx:for="{{browseList}}"
+      wx:key="_id"
+      data-id="{{item._id}}"
+      bindtap="onRecipeTap"
+    >
+      <image class="card-thumb" src="{{item.heroImage}}" mode="aspectFill"></image>
+      <view class="card-info">
+        <view class="card-cat">{{item.catLabel}}</view>
+        <view class="card-title">{{item.title}}</view>
+        <view class="card-meta">
+          <text>{{item.time}}</text>
+          <text class="dot"></text>
+          <text>{{item.diff}}</text>
+          <view
+            class="like {{item.liked ? 'liked' : ''}}"
+            catchtap="onLikeTap"
+            data-id="{{item._id}}"
+            data-index="{{index}}"
+          >
+            <text class="like-ico">{{item.liked ? '♥' : '♡'}}</text>
+            <text class="like-text">{{item.liked ? '已收藏' : '收藏'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{!browseList.length && !loading}}">
+      <text class="empty-t">该分类暂无菜谱</text>
+    </view>
+  </view>
+
+  <!-- 已收藏列表 -->
+  <view class="list" wx:if="{{tab === 'saved'}}">
+    <view
+      class="card"
+      wx:for="{{savedList}}"
+      wx:key="_id"
+      data-id="{{item._id}}"
+      bindtap="onRecipeTap"
+    >
+      <image class="card-thumb" src="{{item.heroImage}}" mode="aspectFill"></image>
+      <view class="card-info">
+        <view class="card-cat">{{item.catLabel}}</view>
+        <view class="card-title">{{item.title}}</view>
+        <view class="card-meta">
+          <text>{{item.time}}</text>
+          <text class="dot"></text>
+          <text>{{item.diff}}</text>
+          <view
+            class="like liked"
+            catchtap="onLikeTap"
+            data-id="{{item._id}}"
+            data-index="{{index}}"
+            data-saved="1"
+          >
+            <text class="like-ico">♥</text>
+            <text class="like-text">已收藏</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="empty" wx:if="{{!savedList.length && !loading}}">
+      <text class="empty-ico">♡</text>
+      <text class="empty-t">还没有收藏的菜谱</text>
+      <text class="empty-d">在「分类」里点心形按钮\n收藏的菜谱会出现在这里</text>
+    </view>
+  </view>
+
+  <!-- 底部双 tab 按钮栏 -->
+  <view class="tabbar">
+    <view class="tab {{tab === 'browse' ? 'active' : ''}}" data-tab="browse" bindtap="onTabTap">
+      <text class="tab-ico">☰</text>
+      <text class="tab-label">分类</text>
+      <text class="tab-badge">{{cats.length}}</text>
+    </view>
+    <view class="tab {{tab === 'saved' ? 'active' : ''}}" data-tab="saved" bindtap="onTabTap">
+      <text class="tab-ico">♥</text>
+      <text class="tab-label">已收藏</text>
+      <text class="tab-badge">{{savedCount}}</text>
+    </view>
+  </view>
+</view>

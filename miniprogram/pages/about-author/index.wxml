@@ -1,0 +1,54 @@
+<t-navbar title="关于作者" fixed placeholder>
+  <view slot="left" class="back-btn" bindtap="onBack">
+    <t-icon name="chevron-left" size="44rpx" color="#333" />
+  </view>
+</t-navbar>
+
+<view class="page">
+  <!-- 顶部 -->
+  <view class="hero">
+    <view class="avatar-wrap">
+      <view class="avatar-sticker">👋</view>
+      <t-avatar
+        wx:if="{{profile.avatar}}"
+        image="{{profile.avatar}}"
+        size="180rpx"
+        shape="circle"
+      />
+      <view wx:else class="avatar-fallback">{{profile.initial}}</view>
+    </view>
+    <view class="name">{{profile.name}}</view>
+    <view class="slogan">{{profile.slogan}}</view>
+    <view class="mini-tags">
+      <text class="mini-tag" wx:for="{{profile.miniTags}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 认识一下 -->
+  <view class="block">
+    <view class="block-title">👋 认识一下</view>
+    <view class="bubble">{{aboutText}}</view>
+  </view>
+
+  <!-- 喜欢捣鼓的 -->
+  <view class="block">
+    <view class="block-title">🍳 喜欢捣鼓的</view>
+    <view class="chips">
+      <view class="chip" wx:for="{{skills}}" wx:key="*this">{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 二维码 -->
+  <view class="block">
+    <view class="block-title">📱 联系我</view>
+    <view class="qr-card">
+      <view class="qr-box">
+        <image class="qr-img" src="{{qrcode}}" mode="aspectFit" show-menu-by-longpress />
+      </view>
+      <view class="qr-title">扫一下，交个朋友</view>
+      <view class="qr-desc">长按图片可以保存 · 备注来意我会回</view>
+    </view>
+  </view>
+
+  <view class="footer">Made with ❤ & ☕ by {{profile.name}}</view>
+</view>

@@ -20,8 +20,26 @@ button::after{
 
 
 page {
-  background: #f6f6f6;
+  /* 设计 token：纸感中性色 + 品牌绿 + 陶土橙（菜谱） */
+  --ink: #1a1d21;
+  --ink-2: #3a3d41;
+  --paper: #f4f4f1;
+  --surface: #ffffff;
+  --surface-2: #efefe9;
+  --line: #e4e4dd;
+  --muted: #868a86;
+  --faint: #b4b8b3;
+  --brand: #1f8a4c;
+  --brand-deep: #156a39;
+  --brand-soft: #e7f3ec;
+  --amber: #b85a22;
+  --amber-soft: #f4e4d2;
+  --like: #d4506a;
+
+  background: var(--paper);
+  color: var(--ink);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
 }

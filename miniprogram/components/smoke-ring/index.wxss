@@ -1,0 +1,38 @@
+.ring-wrap {
+  position: relative;
+  width: 320rpx;
+  height: 320rpx;
+  margin: 28rpx auto 0;
+}
+
+.ring-canvas {
+  width: 320rpx;
+  height: 320rpx;
+  display: block;
+}
+
+.ring-center {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ring-num {
+  font-size: 76rpx;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.ring-label {
+  font-size: 22rpx;
+  color: #868a86;
+  margin-top: 10rpx;
+}

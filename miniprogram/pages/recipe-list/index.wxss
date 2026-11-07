@@ -1,0 +1,193 @@
+/* recipe-list/index.wxss */
+.page {
+  min-height: 100vh;
+  padding-bottom: 140rpx; /* 给底部 tab bar 让位 */
+}
+
+/* PGC 提示条 */
+.pgc-bar {
+  margin: 16rpx 32rpx 20rpx;
+  padding: 18rpx 24rpx;
+  background: var(--surface-2);
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+.pgc-ico {
+  font-size: 26rpx;
+}
+.pgc-text {
+  font-size: 22rpx;
+  color: var(--muted);
+}
+.pgc-official {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* 分类 chips */
+.chips {
+  white-space: nowrap;
+  padding: 0 32rpx 24rpx;
+}
+.chip {
+  display: inline-block;
+  padding: 14rpx 28rpx;
+  margin-right: 16rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999rpx;
+}
+.chip.active {
+  color: var(--amber);
+  background: var(--amber-soft);
+  border-color: transparent;
+}
+
+/* 菜谱列表 */
+.list {
+  padding: 0 32rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.card {
+  display: flex;
+  background: var(--surface);
+  border-radius: 24rpx;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+.card:active {
+  transform: scale(0.99);
+}
+.card-thumb {
+  width: 248rpx;
+  height: 248rpx;
+  flex-shrink: 0;
+  background: #ddd;
+}
+.card-info {
+  flex: 1;
+  padding: 24rpx 28rpx;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.card-cat {
+  font-size: 20rpx;
+  letter-spacing: 2rpx;
+  text-transform: uppercase;
+  color: var(--amber);
+  font-weight: 600;
+}
+.card-title {
+  margin-top: 8rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.card-meta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  font-size: 22rpx;
+  color: var(--muted);
+}
+.card-meta .dot {
+  width: 5rpx;
+  height: 5rpx;
+  border-radius: 50%;
+  background: var(--faint);
+}
+.like {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  color: var(--faint);
+  padding: 8rpx 4rpx;
+}
+.like.liked {
+  color: var(--like);
+}
+.like-ico {
+  font-size: 30rpx;
+}
+.like-text {
+  font-size: 22rpx;
+}
+
+/* 空状态 */
+.empty {
+  padding: 120rpx 48rpx;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+.empty-ico {
+  font-size: 80rpx;
+  color: var(--faint);
+  opacity: 0.4;
+}
+.empty-t {
+  font-size: 28rpx;
+  color: var(--ink);
+  font-weight: 500;
+}
+.empty-d {
+  font-size: 24rpx;
+  color: var(--faint);
+  line-height: 1.5;
+}
+
+/* 底部双 tab 按钮栏 */
+.tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  display: flex;
+  gap: 16rpx;
+  padding: 20rpx 32rpx;
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+}
+.tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  padding: 24rpx 0;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--muted);
+  border-radius: 20rpx;
+}
+.tab.active {
+  color: var(--amber);
+  background: var(--amber-soft);
+}
+.tab-ico {
+  font-size: 32rpx;
+}
+.tab-badge {
+  font-size: 22rpx;
+  color: var(--faint);
+}
+.tab.active .tab-badge {
+  color: var(--amber);
+}
